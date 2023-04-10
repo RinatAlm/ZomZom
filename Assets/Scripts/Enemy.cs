@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.AI;
 using UnityEngine;
 
-public class EnemyMove : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
     [SerializeField] Transform target;
     public float minDistance = 0.5f;
@@ -18,17 +18,9 @@ public class EnemyMove : MonoBehaviour
     }
     private void Update()
     {
-        /*
-        if (Vector2.Distance(transform.position, target.position)> minDistance)
-        {
-            transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
-        }
-        */
-        if (target != null)
-        {
+       
+       
             navComponent.SetDestination(target.position);
-            
-        }
-
+           
     }
 }
