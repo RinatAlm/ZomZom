@@ -6,9 +6,9 @@ using System.Collections.Generic;
 public class Weapon : MonoBehaviour
 {  
     public float damage;
-    public float shootTimer;
     public GameObject bulletTrail;
     public float range = 10;
+    public float shootTimerMax = 0.5f;
 
     public void SetPosition(Vector3 startPos)//Setting positions for bullets
     {

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.AI;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
@@ -9,6 +10,9 @@ public class Enemy : MonoBehaviour
     public float minDistance = 0.5f;
     public float speed = 2;
     public NavMeshAgent navComponent;
+    public float health = 100f;
+    public Slider healthSlider;
+
 
     private void Start()
     {
@@ -17,10 +21,13 @@ public class Enemy : MonoBehaviour
         navComponent.speed = speed;
     }
     private void Update()
-    {
-       
-       
-            navComponent.SetDestination(target.position);
+    {     
+        navComponent.SetDestination(target.position);
+        healthSlider.value = health;
+        if(health<=0)
+        {
+            gameObject.SetActive(false);
+        }
            
     }
 }

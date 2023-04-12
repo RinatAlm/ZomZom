@@ -14,6 +14,7 @@ public class BulletTrail : MonoBehaviour
     
         progress += Time.deltaTime * speed;
         transform.position = Vector3.Lerp(startPosition, targetPosition, progress);
+      
     }
     
     public void SetStartPosition(Vector3 startPosition)
