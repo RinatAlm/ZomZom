@@ -18,23 +18,21 @@ public class GunManager : MonoBehaviour
                     break;
                 }
             }
-               
-
-
-            /*
-            foreach(GameObject arm in gunnerArms)
-            {
-                if(arm.GetComponent<GunnerArm>().targetEnemy==null)
-                {
-                    arm.GetComponent<GunnerArm>().SetTarget(enemy);
-                }
-            }   
-            */
             enemies.Add(enemy);
         }
     }
 
-   
+    private void Update()
+    {
+        foreach (GameObject arm in gunnerArms)
+        {
+            if (arm.GetComponent<GunnerArm>().targetEnemy == null && enemies.Count !=0)
+            {
+                arm.GetComponent<GunnerArm>().SetTarget(enemies[Random.Range(0,enemies.Count)]);
+            }
+        }
+    }
+
 
     private void OnTriggerExit(Collider other)
     {

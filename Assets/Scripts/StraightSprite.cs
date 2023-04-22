@@ -7,7 +7,7 @@ public class StraightSprite : MonoBehaviour
     [SerializeField]
     private Transform follow = null;
     
-    void FixedUpdate()
+    void FixedUpdate()//Script to hold sprite straight to the user
     {
         transform.position = follow.position;
     }

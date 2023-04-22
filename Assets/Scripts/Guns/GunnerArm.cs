@@ -9,19 +9,30 @@ public class GunnerArm : MonoBehaviour
     public Enemy targetEnemy;
     public Vector3 direction;
     public float shootTimer;
-    
-   
+    public GunManager gunManager;
+    public short shots;
 
-   
+    private void Start()
+    {
+        gunManager = FindObjectOfType<GunManager>();
+    }
+
+
     private void Update()
     {
-        if (weapon != null && targetEnemy != null)
+        if (weapon != null && targetEnemy != null && shots != weapon.numberOfShots)
         {
             shootTimer -= Time.deltaTime;
             if(shootTimer<=0)
             {
-                shootTimer = weapon.shootTimerMax;
+                shootTimer = weapon.delay;
+                shots++;
                 Shoot();
+                if(shots == weapon.numberOfShots)
+                {
+                    shots = 0;
+                    shootTimer = weapon.shootTimerMax;
+                }
             }
             
         }
@@ -41,6 +52,12 @@ public class GunnerArm : MonoBehaviour
                 trail.GetComponent<BulletTrail>().targetPosition = targetEnemy.transform.position;
                 targetEnemy.health -= weapon.damage;
                 Destroy(trail, 1);
+                
+            }
+            if(targetEnemy.health<=0)
+            {
+                gunManager.enemies.Remove(targetEnemy);
+                targetEnemy = null;
                 
             }
         }

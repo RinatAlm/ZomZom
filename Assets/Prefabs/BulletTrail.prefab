@@ -84,7 +84,7 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.03173828
+        value: 0.015867203
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -92,8 +92,8 @@ TrailRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.9377419
-        value: 0.023803711
+        time: 0.7598859
+        value: 0.00793457
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -105,8 +105,8 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 1, g: 0.2627451, b: 0.050943315, a: 1}
+      key1: {r: 0.7924528, g: 0.68707645, b: 0.10017798, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -153,6 +153,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59fda4a6267216c4a989718a8e442786, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startPosition: {x: 1.1037812, y: 0.033331122, z: -0.14019938}
+  startPosition: {x: -1.4882722, y: 0.033331003, z: -1.1715672}
   targetPosition: {x: 0, y: 0, z: 0}
   speed: 10
