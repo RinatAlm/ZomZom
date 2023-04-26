@@ -8,9 +8,9 @@ public class GunnerArm : MonoBehaviour
     public Weapon weapon;
     public Enemy targetEnemy;
     public Vector3 direction;
-    public float shootTimer;
+    private float shootTimer;
     public GunManager gunManager;
-    public short shots;
+    private short shots;
 
     private void Start()
     {
@@ -23,45 +23,43 @@ public class GunnerArm : MonoBehaviour
         if (weapon != null && targetEnemy != null && shots != weapon.numberOfShots)
         {
             shootTimer -= Time.deltaTime;
-            if(shootTimer<=0)
+            if (shootTimer <= 0)
             {
                 shootTimer = weapon.delay;
                 shots++;
                 Shoot();
-                if(shots == weapon.numberOfShots)
+                if (shots == weapon.numberOfShots)
                 {
                     shots = 0;
                     shootTimer = weapon.shootTimerMax;
                 }
             }
-            
+
         }
     }
 
     public void Shoot()
     {
-        if(targetEnemy!=null)
+        if (targetEnemy != null)
         {
-            Debug.Log(targetEnemy.transform.position);
             direction = targetEnemy.transform.position - transform.position;
             weapon.SetPosition(transform.position);
             RaycastHit hit;
-            Physics.Raycast(transform.position, targetEnemy.gameObject.transform.position, out hit, weapon.range);
+            Physics.Raycast(transform.position, targetEnemy.gameObject.transform.position, out hit, weapon.range);//Shoot bullet in direction of 
             {
-                var trail = Instantiate(weapon.bulletTrail, transform.position, Quaternion.LookRotation(direction));                
+                var trail = Instantiate(weapon.bulletTrail, transform.position, Quaternion.LookRotation(direction));
                 trail.GetComponent<BulletTrail>().targetPosition = targetEnemy.transform.position;
-                targetEnemy.health -= weapon.damage;
+                targetEnemy.enemyHealth.TakeDamage(weapon.damage);
                 Destroy(trail, 1);
-                
+
             }
-            if(targetEnemy.health<=0)
+            if (!targetEnemy.enemyHealth.gameObject.activeSelf)//Checking if enemy is dead and not active
             {
                 gunManager.enemies.Remove(targetEnemy);
                 targetEnemy = null;
-                
             }
         }
-       
+
     }
 
     public void SetTarget(Enemy targetEnemy)

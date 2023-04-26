@@ -4,11 +4,8 @@ using UnityEngine;
 
 public class StraightSprite : MonoBehaviour
 {
-    [SerializeField]
-    private Transform follow = null;
-    
     void FixedUpdate()//Script to hold sprite straight to the user
     {
-        transform.position = follow.position;
+        gameObject.transform.rotation = Quaternion.Euler(90, 0, 0);
     }
 }
