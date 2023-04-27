@@ -11,12 +11,11 @@ public class EnemyMovement : MonoBehaviour
     public float speed = 2;
    public Enemy enemyCharacter;
 
-    private Coroutine followCoroutine;
 
     public void StartChasing()
     {
         
-        followCoroutine = StartCoroutine(followTarget());
+     StartCoroutine(FollowTarget());
         
     }
     private void Start()
@@ -24,7 +23,7 @@ public class EnemyMovement : MonoBehaviour
         target = GameObject.Find("Character").GetComponent<Transform>();//Identifying player and speed 
         enemyCharacter.navComponent.speed = speed;
     }
-    private IEnumerator followTarget()
+    private IEnumerator FollowTarget()
     {
         WaitForSeconds wait = new WaitForSeconds(updateRate);
         while (enabled)

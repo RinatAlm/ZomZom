@@ -10,8 +10,12 @@ public class GunnerArm : MonoBehaviour
     public Vector3 direction;
     private float shootTimer;
     public GunManager gunManager;
+    public LayerMask mask;
     private short shots;
-
+    private float SphereCastRadius = 0.05f;
+    private RaycastHit hit;
+    public BulletSpawnManager bulletSpawnManager;
+    
     private void Start()
     {
         gunManager = FindObjectOfType<GunManager>();
@@ -19,7 +23,7 @@ public class GunnerArm : MonoBehaviour
 
 
     private void Update()
-    {
+    {     
         if (weapon != null && targetEnemy != null && shots != weapon.numberOfShots)
         {
             shootTimer -= Time.deltaTime;
@@ -44,15 +48,22 @@ public class GunnerArm : MonoBehaviour
         {
             direction = targetEnemy.transform.position - transform.position;
             weapon.SetPosition(transform.position);
-            RaycastHit hit;
-            Physics.Raycast(transform.position, targetEnemy.gameObject.transform.position, out hit, weapon.range);//Shoot bullet in direction of 
+           if(Physics.SphereCast(transform.position, SphereCastRadius, direction.normalized, out hit, mask))//If no obstacles => shoot
             {
-                var trail = Instantiate(weapon.bulletTrail, transform.position, Quaternion.LookRotation(direction));
-                trail.GetComponent<BulletTrail>().targetPosition = targetEnemy.transform.position;
+                bulletSpawnManager.DoSpawnBullet(weapon.bulletIndex,transform.position,direction.normalized,weapon.bulletSpeed);
                 targetEnemy.enemyHealth.TakeDamage(weapon.damage);
-                Destroy(trail, 1);
-
             }
+
+            //
+            //Physics.Raycast(transform.position, targetEnemy.gameObject.transform.position, out hit, weapon.range);//Shoot bullet in direction of 
+            //{
+
+            //    var trail = Instantiate(weapon.bulletTrail, transform.position, Quaternion.LookRotation(direction));
+            //    trail.GetComponent<BulletTrail>().targetPosition = targetEnemy.transform.position;
+            //    targetEnemy.enemyHealth.TakeDamage(weapon.damage);
+            //    Destroy(trail, 1);
+
+            //}
             if (!targetEnemy.enemyHealth.gameObject.activeSelf)//Checking if enemy is dead and not active
             {
                 gunManager.enemies.Remove(targetEnemy);
@@ -67,4 +78,6 @@ public class GunnerArm : MonoBehaviour
         this.targetEnemy = targetEnemy;
     }
 
+
+   
 }

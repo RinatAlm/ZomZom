@@ -28,7 +28,7 @@ public class GunManager : MonoBehaviour
         {
             if (arm.GetComponent<GunnerArm>().targetEnemy == null && enemies.Count !=0)
             {
-                arm.GetComponent<GunnerArm>().SetTarget(enemies[Random.Range(0,enemies.Count)]);
+                arm.GetComponent<GunnerArm>().SetTarget(enemies[0]);//Take first enemy from the list
             }
         }
     }

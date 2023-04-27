@@ -34,8 +34,7 @@ public class ObjectPool
 
     public void ReturnObjectToPool(PoolableObject poolableObject)
     {
-        availableObjects.Add(poolableObject);
-       
+        availableObjects.Add(poolableObject);       
     }
 
     public PoolableObject GetObject()
@@ -50,7 +49,7 @@ public class ObjectPool
         }
         else
         {
-            Debug.LogWarning("Error could not get object from pool");
+            Debug.Log("Error could not get object from pool");
             return null;
 
         }

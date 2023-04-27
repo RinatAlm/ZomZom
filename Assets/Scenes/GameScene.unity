@@ -106,7 +106,7 @@ NavMeshSettings:
   m_BuildSettings:
     serializedVersion: 2
     agentTypeID: 0
-    agentRadius: 0.05
+    agentRadius: 0.1
     agentHeight: 0.3
     agentSlope: 45
     agentClimb: 0.1
@@ -114,7 +114,7 @@ NavMeshSettings:
     maxJumpAcrossDistance: 0
     minRegionArea: 2
     manualCellSize: 0
-    cellSize: 0.016666668
+    cellSize: 0.033333335
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
@@ -372,6 +372,10 @@ MonoBehaviour:
   targetEnemy: {fileID: 0}
   direction: {x: 0, y: 0, z: 0}
   gunManager: {fileID: 0}
+  mask:
+    serializedVersion: 2
+    m_Bits: 1
+  bulletSpawnManager: {fileID: 608401035}
 --- !u!1 &311005484
 GameObject:
   m_ObjectHideFlags: 0
@@ -420,6 +424,10 @@ MonoBehaviour:
   targetEnemy: {fileID: 0}
   direction: {x: 0, y: 0, z: 0}
   gunManager: {fileID: 0}
+  mask:
+    serializedVersion: 2
+    m_Bits: 1
+  bulletSpawnManager: {fileID: 608401035}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -689,6 +697,57 @@ MonoBehaviour:
   targetEnemy: {fileID: 0}
   direction: {x: 0, y: 0, z: 0}
   gunManager: {fileID: 561677521}
+  mask:
+    serializedVersion: 2
+    m_Bits: 1
+  bulletSpawnManager: {fileID: 608401035}
+--- !u!1 &608401034
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 608401036}
+  - component: {fileID: 608401035}
+  m_Layer: 0
+  m_Name: BulletSpawnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &608401035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 608401034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed40629373725e7409ffbc1ffa2f01d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  numberOfBulletsToSpawn: 10
+  bulletPrefabs:
+  - {fileID: -8610415118371856861, guid: f433166b5e886c04783cb6316395eff4, type: 3}
+--- !u!4 &608401036
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 608401034}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0.08956474, y: -0.109004915, z: -0.70097077}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1754460906}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &635046572
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2027,13 +2086,17 @@ MonoBehaviour:
   targetEnemy: {fileID: 0}
   direction: {x: 0, y: 0, z: 0}
   gunManager: {fileID: 0}
+  mask:
+    serializedVersion: 2
+    m_Bits: 1
+  bulletSpawnManager: {fileID: 608401035}
 --- !u!43 &1563631594
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1320
+  m_Name: pb_Mesh-1258
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2221,11 +2284,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1754460906}
-  numberOfEnemiesToSpawn: 10
-  spawnDelay: 5
+  numberOfEnemiesToSpawn: 2
+  spawnDelay: 1
   enemyPrefabs:
   - {fileID: 5157714529279639753, guid: 694da20fe03723a46afb5cfdb64ec59c, type: 3}
   EnemySpawnMethod: 0
+  isSpawnCoroutineRun: 0
   spawnedEnemies: 0
 --- !u!4 &1575992019
 Transform:
@@ -2619,6 +2683,7 @@ Transform:
   m_Children:
   - {fileID: 519420032}
   - {fileID: 561677520}
+  - {fileID: 608401036}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
@@ -2681,11 +2746,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
-  bulletTrail: {fileID: 6068914998436322282, guid: 10d77900dc6dd1648b0ae810dbc0739c, type: 3}
+  bullet: {fileID: 6068914998436322282, guid: 10d77900dc6dd1648b0ae810dbc0739c, type: 3}
   range: 20
-  shootTimerMax: 1
-  numberOfShots: 3
+  shootTimerMax: 3
+  numberOfShots: 1
   delay: 0.1
+  bulletIndex: 0
+  bulletSpeed: 1
 --- !u!4 &1986144523
 Transform:
   m_ObjectHideFlags: 0
@@ -2707,7 +2774,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28990
+  m_Name: pb_Mesh28988
   serializedVersion: 10
   m_SubMeshes: []
   m_Shapes:

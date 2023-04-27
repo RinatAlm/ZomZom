@@ -8,7 +8,7 @@ using UnityEditor;
 #endif
 
 
-public class EnemySpawnManager : PoolableObject
+public class EnemySpawnManager : MonoBehaviour
 {
     public Transform player;
     public int numberOfEnemiesToSpawn;
@@ -16,21 +16,20 @@ public class EnemySpawnManager : PoolableObject
     public List<Enemy> enemyPrefabs = new List<Enemy>();
     public SpawnMethod EnemySpawnMethod = SpawnMethod.RoundRobin;
     NavMeshTriangulation triangulation;
+    public bool isSpawnCoroutineRun = false;
     private Dictionary<int, ObjectPool> enemyObjectPools = new Dictionary<int, ObjectPool>();
     public int spawnedEnemies = 0;
-    private void Awake()
-    {
-        for(int i = 0;i<enemyPrefabs.Count; i++)
-        {
-            enemyObjectPools.Add(i, ObjectPool.CreateInstance(enemyPrefabs[i], numberOfEnemiesToSpawn));
-        }
-       
-    }
+
 
     private void Start()
     {
+        for (int i = 0; i < enemyPrefabs.Count; i++)
+        {
+            enemyObjectPools.Add(i, ObjectPool.CreateInstance(enemyPrefabs[i], numberOfEnemiesToSpawn));
+        }
         triangulation = NavMesh.CalculateTriangulation();
-       for(int i = 0;i<numberOfEnemiesToSpawn;i++)
+
+        for (int i = 0; i < numberOfEnemiesToSpawn; i++)
         {
             if (EnemySpawnMethod == SpawnMethod.RoundRobin)
             {
@@ -42,13 +41,17 @@ public class EnemySpawnManager : PoolableObject
             }
             spawnedEnemies++;
         }
-        StartCoroutine(SpawnEnemies());
+
 
     }
 
     private void Update()
-    {       
-        if(Input.GetKeyDown(KeyCode.Escape))
+    {
+        if(!isSpawnCoroutineRun)
+        {
+            StartCoroutine(SpawnEnemies());
+        }     
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             Exit();
         }
@@ -56,9 +59,10 @@ public class EnemySpawnManager : PoolableObject
 
     IEnumerator SpawnEnemies()
     {
+        isSpawnCoroutineRun = true;
         WaitForSeconds wait = new WaitForSeconds(spawnDelay);
-        while(spawnedEnemies<numberOfEnemiesToSpawn)
-            {
+        while (spawnedEnemies < numberOfEnemiesToSpawn)
+        {
             if (EnemySpawnMethod == SpawnMethod.RoundRobin)
             {
                 SpawnRoundRobinEnemy(spawnedEnemies);
@@ -66,10 +70,11 @@ public class EnemySpawnManager : PoolableObject
             else if (EnemySpawnMethod == SpawnMethod.Random)
             {
                 SpawnRandomEnemy();
-            }           
-        spawnedEnemies++;
-        yield return wait;
+            }
+            spawnedEnemies++;
+            yield return wait;
         }
+        isSpawnCoroutineRun = false;
 
     }
 
