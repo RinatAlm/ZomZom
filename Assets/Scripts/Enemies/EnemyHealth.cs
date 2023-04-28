@@ -26,10 +26,6 @@ public class EnemyHealth : MonoBehaviour
         else
         {
             healthSlider.gameObject.SetActive(true);
-        }
-        if (health <= 0)
-        {
-            enemyCharacter.Disable();
-        }
+        }     
     }
 }

@@ -23,7 +23,11 @@ public class GunnerArm : MonoBehaviour
 
 
     private void Update()
-    {     
+    {   
+        if(targetEnemy == null)
+        {
+            shootTimer = weapon.delay;
+        }
         if (weapon != null && targetEnemy != null && shots != weapon.numberOfShots)
         {
             shootTimer -= Time.deltaTime;
@@ -44,38 +48,30 @@ public class GunnerArm : MonoBehaviour
 
     public void Shoot()
     {
-        if (targetEnemy != null)
+     
+        if (targetEnemy!=null)
         {
             direction = targetEnemy.transform.position - transform.position;
-            weapon.SetPosition(transform.position);
+          
            if(Physics.SphereCast(transform.position, SphereCastRadius, direction.normalized, out hit, mask))//If no obstacles => shoot
             {
-                bulletSpawnManager.DoSpawnBullet(weapon.bulletIndex,transform.position,direction.normalized,weapon.bulletSpeed);
-                targetEnemy.enemyHealth.TakeDamage(weapon.damage);
-            }
-
-            //
-            //Physics.Raycast(transform.position, targetEnemy.gameObject.transform.position, out hit, weapon.range);//Shoot bullet in direction of 
-            //{
-
-            //    var trail = Instantiate(weapon.bulletTrail, transform.position, Quaternion.LookRotation(direction));
-            //    trail.GetComponent<BulletTrail>().targetPosition = targetEnemy.transform.position;
-            //    targetEnemy.enemyHealth.TakeDamage(weapon.damage);
-            //    Destroy(trail, 1);
-
-            //}
-            if (!targetEnemy.enemyHealth.gameObject.activeSelf)//Checking if enemy is dead and not active
-            {
-                gunManager.enemies.Remove(targetEnemy);
-                targetEnemy = null;
-            }
+                bulletSpawnManager.DoSpawnBullet(this,transform.position,direction.normalized);              
+            }          
         }
 
     }
 
+    public void ResetTarget()
+    {      
+        targetEnemy = null;
+    }
     public void SetTarget(Enemy targetEnemy)
     {
-        this.targetEnemy = targetEnemy;
+     
+            this.targetEnemy = targetEnemy;
+             if (targetEnemy != null)
+            this.targetEnemy.gunnerArms.Add(this);
+        
     }
 
 

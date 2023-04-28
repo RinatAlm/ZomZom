@@ -730,7 +730,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed40629373725e7409ffbc1ffa2f01d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfBulletsToSpawn: 10
+  numberOfBulletsToSpawn: 40
   bulletPrefabs:
   - {fileID: -8610415118371856861, guid: f433166b5e886c04783cb6316395eff4, type: 3}
 --- !u!4 &608401036
@@ -2284,7 +2284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1754460906}
-  numberOfEnemiesToSpawn: 2
+  numberOfEnemiesToSpawn: 20
   spawnDelay: 1
   enemyPrefabs:
   - {fileID: 5157714529279639753, guid: 694da20fe03723a46afb5cfdb64ec59c, type: 3}
@@ -2677,7 +2677,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1754460901}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0.76, y: 0.06, z: -1.08}
+  m_LocalPosition: {x: -0.845, y: 0.06, z: -1.516}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2746,13 +2746,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
-  bullet: {fileID: 6068914998436322282, guid: 10d77900dc6dd1648b0ae810dbc0739c, type: 3}
+  bullet: {fileID: 8502909531764189710, guid: f433166b5e886c04783cb6316395eff4, type: 3}
   range: 20
-  shootTimerMax: 3
+  shootTimerMax: 0.1
   numberOfShots: 1
   delay: 0.1
   bulletIndex: 0
-  bulletSpeed: 1
+  bulletSpeed: 3
 --- !u!4 &1986144523
 Transform:
   m_ObjectHideFlags: 0
@@ -2774,7 +2774,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28988
+  m_Name: pb_Mesh28994
   serializedVersion: 10
   m_SubMeshes: []
   m_Shapes:

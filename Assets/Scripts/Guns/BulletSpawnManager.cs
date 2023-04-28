@@ -16,15 +16,16 @@ public class BulletSpawnManager : MonoBehaviour
 
     }
     
-    public void DoSpawnBullet(int spawnIndex,Vector3 InitialPosition,Vector3 direction,float velocity)
+    public void DoSpawnBullet(GunnerArm gunnerArm,Vector3 InitialPosition,Vector3 direction)
     {
-        PoolableObject poolableObject = bulletObjectPools[spawnIndex].GetObject();
+        PoolableObject poolableObject = bulletObjectPools[gunnerArm.weapon.bulletIndex].GetObject();
         if (poolableObject != null)
         {
             Bullet bullet = poolableObject.GetComponent<Bullet>();
             //Actions
+            bullet.bulletOfArm = gunnerArm;
             bullet.transform.position = InitialPosition;
-            bullet.bulletBody.velocity = direction  * velocity;
+            bullet.bulletBody.velocity = direction  * gunnerArm.weapon.bulletSpeed;
 
         }
         else
