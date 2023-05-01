@@ -23,38 +23,54 @@ public class EnemySpawnManager : MonoBehaviour
 
     private void Start()
     {
-        for (int i = 0; i < enemyPrefabs.Count; i++)
+        if(Time.timeScale == 1)
         {
-            enemyObjectPools.Add(i, ObjectPool.CreateInstance(enemyPrefabs[i], numberOfEnemiesToSpawn));
+          
+            for (int i = 0; i < numberOfEnemiesToSpawn; i++)
+            {
+                if (EnemySpawnMethod == SpawnMethod.RoundRobin)
+                {
+                    SpawnRoundRobinEnemy(spawnedEnemies);
+                }
+                else if (EnemySpawnMethod == SpawnMethod.Random)
+                {
+                    SpawnRandomEnemy();
+                }
+                spawnedEnemies++;
+            }
         }
-        triangulation = NavMesh.CalculateTriangulation();
+        else if (Time.timeScale == 0)
+        {
+            for (int i = 0; i < enemyPrefabs.Count; i++)
+            {
+                enemyObjectPools.Add(i, ObjectPool.CreateInstance(enemyPrefabs[i], numberOfEnemiesToSpawn));
+            }
+            triangulation = NavMesh.CalculateTriangulation();
+        }
 
-        for (int i = 0; i < numberOfEnemiesToSpawn; i++)
-        {
-            if (EnemySpawnMethod == SpawnMethod.RoundRobin)
-            {
-                SpawnRoundRobinEnemy(spawnedEnemies);
-            }
-            else if (EnemySpawnMethod == SpawnMethod.Random)
-            {
-                SpawnRandomEnemy();
-            }
-            spawnedEnemies++;
-        }
+
 
 
     }
 
     private void Update()
     {
-        if(!isSpawnCoroutineRun)
+        if(Time.timeScale == 0)
         {
-            StartCoroutine(SpawnEnemies());
-        }     
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Exit();
+
         }
+        else if(Time.timeScale == 1)
+        {
+            if (!isSpawnCoroutineRun)
+            {
+                StartCoroutine(SpawnEnemies());
+            }
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Exit();
+            }
+        }
+        
     }
 
     IEnumerator SpawnEnemies()

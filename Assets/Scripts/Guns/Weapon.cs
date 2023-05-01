@@ -16,7 +16,8 @@ public class Weapon : MonoBehaviour
     
     public void SetPosition(Vector3 startPos)//Setting positions for bullets
     {
-        bullet.GetComponent<Bullet>().SetStartPosition(startPos);       
+        bullet.GetComponent<Bullet>().SetStartPosition(startPos);     
+        
     }
 
 

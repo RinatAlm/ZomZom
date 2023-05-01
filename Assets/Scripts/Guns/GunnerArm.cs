@@ -12,7 +12,8 @@ public class GunnerArm : MonoBehaviour
     public GunManager gunManager;
     public LayerMask mask;
     private short shots;
-    private float SphereCastRadius = 0.05f;
+    private float shootRadius = 1;
+    private float SphereCastRadius = 0.1f;
     private RaycastHit hit;
     public BulletSpawnManager bulletSpawnManager;
     
@@ -52,10 +53,19 @@ public class GunnerArm : MonoBehaviour
         if (targetEnemy!=null)
         {
             direction = targetEnemy.transform.position - transform.position;
-          
-           if(Physics.SphereCast(transform.position, SphereCastRadius, direction.normalized, out hit, mask))//If no obstacles => shoot
-            {
-                bulletSpawnManager.DoSpawnBullet(this,transform.position,direction.normalized);              
+            
+           if (Physics.SphereCast(transform.position, SphereCastRadius, direction.normalized, out hit, shootRadius, mask))//If no obstacles => shoot
+            {               
+                if(!hit.collider.CompareTag("Obstacle"))
+                {                  
+                    bulletSpawnManager.DoSpawnBullet(this, transform.position, direction.normalized);
+                }
+                else
+                {
+                    ResetTarget();
+                }
+
+                             
             }          
         }
 
