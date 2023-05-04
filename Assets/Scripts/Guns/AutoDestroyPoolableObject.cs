@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AutoDestroyPoolableObject : PoolableObject
 {
-    public float AutoDestroyTime = 3;
+    public float AutoDestroyTime = 2;
     private const string DisableMethodName = "Disable";
 
     public virtual void OnEnable()

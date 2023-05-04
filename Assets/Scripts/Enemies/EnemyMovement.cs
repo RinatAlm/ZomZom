@@ -9,7 +9,7 @@ public class EnemyMovement : MonoBehaviour
     public Transform target;
     public float minDistance = 0.5f;
     public float speed = 2;
-   public Enemy enemyCharacter;
+    public Enemy enemyCharacter;
 
 
     public void StartChasing()
@@ -22,6 +22,14 @@ public class EnemyMovement : MonoBehaviour
     {
         target = GameObject.Find("Character").GetComponent<Transform>();//Identifying player and speed 
         enemyCharacter.navComponent.speed = speed;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Player"))
+        {
+            other.GetComponent<PlayerHealth>().TakeDamage(enemyCharacter.Damage);
+        }
     }
     private IEnumerator FollowTarget()
     {

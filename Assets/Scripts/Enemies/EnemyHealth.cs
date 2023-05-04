@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class EnemyHealth : MonoBehaviour
-{
-    public Enemy enemyCharacter;  
+{  
     public float health = 100f;
     public float maxHealth;
     public Slider healthSlider;
@@ -15,7 +14,7 @@ public class EnemyHealth : MonoBehaviour
         healthSlider.gameObject.SetActive(false);
     }
 
-    public void TakeDamage(float damage)
+    public virtual void TakeDamage(float damage)
     {
         health -= damage;
         healthSlider.value = health;//Displaying Health 

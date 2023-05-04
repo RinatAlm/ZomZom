@@ -12,6 +12,7 @@ public class Enemy : PoolableObject
     public NavMeshAgent navComponent;
     private EnemySpawnManager spawnManager;
     private GunManager gunManager;
+    public float Damage;
 
     private void Awake()
     {
@@ -22,7 +23,11 @@ public class Enemy : PoolableObject
     {
         base.OnDisable();
         enemyHealth.health = 100;
-        spawnManager.spawnedEnemies--;
+        if(Time.timeScale != 0)
+        {
+            spawnManager.spawnedEnemies--;
+        }
+       
     }
 
     public void OnEnable()
@@ -32,6 +37,7 @@ public class Enemy : PoolableObject
 
     public void Disable()
     {
+        GameManager.totalyKilled++;
         gameObject.SetActive(false);
     }
 
@@ -52,6 +58,8 @@ public class Enemy : PoolableObject
                 Disable();
 
             }
+            bullet.numOfAimsToDestr--;
+            if(bullet.numOfAimsToDestr<=0)
             bullet.Disable();
            
             

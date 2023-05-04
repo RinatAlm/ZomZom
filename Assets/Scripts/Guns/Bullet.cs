@@ -9,6 +9,7 @@ public class Bullet : AutoDestroyPoolableObject
     public Vector3 startPosition;
     public Vector3 targetPosition;
     public GunnerArm bulletOfArm;
+    public int numOfAimsToDestr;
        
     public void SetStartPosition(Vector3 startPosition)
     {

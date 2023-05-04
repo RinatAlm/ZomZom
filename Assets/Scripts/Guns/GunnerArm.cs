@@ -16,10 +16,13 @@ public class GunnerArm : MonoBehaviour
     private float SphereCastRadius = 0.1f;
     private RaycastHit hit;
     public BulletSpawnManager bulletSpawnManager;
+    private AudioManager audioManager;
     
     private void Start()
     {
         gunManager = FindObjectOfType<GunManager>();
+        audioManager = FindObjectOfType < AudioManager>();
+
     }
 
 
@@ -29,7 +32,7 @@ public class GunnerArm : MonoBehaviour
         {
             shootTimer = weapon.delay;
         }
-        if (weapon != null && targetEnemy != null && shots != weapon.numberOfShots)
+        if (weapon != null && targetEnemy != null && shots != weapon.numberOfTriggerPressing)
         {
             shootTimer -= Time.deltaTime;
             if (shootTimer <= 0)
@@ -37,7 +40,7 @@ public class GunnerArm : MonoBehaviour
                 shootTimer = weapon.delay;
                 shots++;
                 Shoot();
-                if (shots == weapon.numberOfShots)
+                if (shots == weapon.numberOfTriggerPressing)
                 {
                     shots = 0;
                     shootTimer = weapon.shootTimerMax;
@@ -57,8 +60,13 @@ public class GunnerArm : MonoBehaviour
            if (Physics.SphereCast(transform.position, SphereCastRadius, direction.normalized, out hit, shootRadius, mask))//If no obstacles => shoot
             {               
                 if(!hit.collider.CompareTag("Obstacle"))
-                {                  
-                    bulletSpawnManager.DoSpawnBullet(this, transform.position, direction.normalized);
+                {          
+                    for(int i=0;i<weapon.numOfBulletsPerPressing;i++)
+                    {
+                        bulletSpawnManager.DoSpawnBullet(this, transform.position, RandomizeVector(direction.normalized));
+                    }
+                    weapon.Play();
+                   
                 }
                 else
                 {
@@ -69,6 +77,16 @@ public class GunnerArm : MonoBehaviour
             }          
         }
 
+    }
+
+    public Vector3 RandomizeVector(Vector3 dir)
+    {
+        Vector3 spread = new Vector3(
+            Random.Range(dir.x - weapon.spreadAngle, dir.x + weapon.spreadAngle),
+            dir.y,
+            Random.Range(dir.z - weapon.spreadAngle, dir.z + weapon.spreadAngle)
+            );
+        return spread;
     }
 
     public void ResetTarget()
