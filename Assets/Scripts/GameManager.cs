@@ -6,6 +6,11 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    //[Header("Noise")]
+    //PerlinNoise noise = new PerlinNoise();
+    //public Image gameOverNoiseImage;
+    //[Space(20)]
+    [Header("UI components")]
     public GameObject gameUI;
     public GameObject GameOverPanel;
     public GameObject mainMenueUI;
@@ -15,6 +20,10 @@ public class GameManager : MonoBehaviour
     public GameObject UICamera;
     public GameObject gunManager;
     public Text scoreText;
+    [Space(20)]
+    [Header("UI GunManager")]
+    public GameObject inventoryPanel;
+    [Space(20)]
     public List<Vector3> positionsToAttend = new List<Vector3>();
     public Vector3 destination;
     public Vector3 positionChange;
@@ -23,7 +32,6 @@ public class GameManager : MonoBehaviour
     public int positionChangeSpeed = 30;
     public float gameOverTimeScale = 0.1f;
     public int GameOverTicker = 3;
-
     public static int totalyKilled;
     
     private void Awake()
@@ -32,6 +40,7 @@ public class GameManager : MonoBehaviour
         CharacterCamera.transform.SetParent(UICamera.transform);
         mainMenueUI.SetActive(true);
         gameUI.SetActive(false);
+        
 
     }
     private void Start()
@@ -43,9 +52,12 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
-            GameOver();
+            Time.timeScale = 0.1f;
+            mainMenueUI.SetActive(false);
+            joyStick.SetActive(false);
+            inventoryPanel.SetActive(true);
         }
     }
     private void LateUpdate()
@@ -103,6 +115,7 @@ public class GameManager : MonoBehaviour
         scoreText.text = "Kills:" + totalyKilled.ToString();
         GameOverPanel.SetActive(true);
         joyStick.SetActive(false);
+        //StartCoroutine(NoiseMaker());
         
     }
   
@@ -118,9 +131,25 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0;
     }
 
+    //public void BlackWhiteNoise()
+    //{
+    //    noise.offsetX = Random.Range(0, 9999f);
+    //    noise.offsetY = Random.Range(0, 9999f);
+    //    gameOverNoiseImage.material.mainTexture = noise.GenerateTexture();
+    //}
+
     public void Restart()
     {
         SceneManager.LoadScene("GameScene");
     }
 
+    //IEnumerator NoiseMaker()
+    //{
+    //    WaitForSecondsRealtime wait = new WaitForSecondsRealtime(0.1f);
+    //    while(true)
+    //    {
+    //        BlackWhiteNoise();
+    //        yield return wait; 
+    //    }
+    //}
 }

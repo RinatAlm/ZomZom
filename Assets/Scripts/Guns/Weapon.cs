@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 [System.Serializable]
 public class Weapon : MonoBehaviour
-{  
+{
+    public Sprite weaponSprite;
     public float damage;
     public GameObject bullet;
- //   public float range = 10;
     public float shootTimerMax = 0.5f;
     public float numberOfTriggerPressing = 3;
     public float delay = 0.1f;
