@@ -6,7 +6,7 @@ public class GunManager : MonoBehaviour
 {
     public List<Enemy> enemies = new List<Enemy> ();
     public List<GameObject> gunnerArms = new List<GameObject> ();
-
+    public Sprite emptySprite;
     
     private void OnTriggerEnter(Collider other)//Mark enemy on entering the trigger
     {
@@ -14,7 +14,7 @@ public class GunManager : MonoBehaviour
         {
             for (int i = 0;i<gunnerArms.Count;i++)
             {
-                if (gunnerArms[i].GetComponent<GunnerArm>().targetEnemy == null)
+                if (gunnerArms[i].GetComponent<GunnerArm>().targetEnemy == null && gunnerArms[i].GetComponent<GunnerArm>().weapon.weaponSprite != emptySprite)
                 {
                     gunnerArms[i].GetComponent<GunnerArm>().SetTarget(enemy);
                     break;
@@ -28,7 +28,7 @@ public class GunManager : MonoBehaviour
     {
         foreach (GameObject arm in gunnerArms)
         {
-            if (arm.GetComponent<GunnerArm>().targetEnemy == null && enemies.Count !=0)
+            if (arm.GetComponent<GunnerArm>().targetEnemy == null && enemies.Count !=0 && arm.GetComponent<GunnerArm>().weapon.weaponSprite != emptySprite)
             {
                 arm.GetComponent<GunnerArm>().SetTarget(enemies[Random.Range(0,enemies.Count)]);//Take first enemy from the list
             }

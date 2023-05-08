@@ -17,6 +17,7 @@ public class Weapon : MonoBehaviour
     public float numOfBulletsPerPressing;
     public int penetration;
     public Sound shootSound;
+    public string weaponDescription;
 
     public void Start()
     {

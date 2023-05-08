@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     public GameObject CharacterCamera;
     public GameObject UICamera;
     public GameObject gunManager;
+    public GameObject openInventoryButton;
+    public InventoryManager inventoryManager;
     public Text scoreText;
     [Space(20)]
     [Header("UI GunManager")]
@@ -40,11 +42,14 @@ public class GameManager : MonoBehaviour
         CharacterCamera.transform.SetParent(UICamera.transform);
         mainMenueUI.SetActive(true);
         gameUI.SetActive(false);
-        
+        joyStick.SetActive(true);
+       
+
 
     }
     private void Start()
     {
+          
         UICamera.transform.position = positionsToAttend[0];
         destination = positionsToAttend[0];
         CalculateNextPoint();
@@ -52,13 +57,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            Time.timeScale = 0.1f;
-            mainMenueUI.SetActive(false);
-            joyStick.SetActive(false);
-            inventoryPanel.SetActive(true);
-        }
+      
     }
     private void LateUpdate()
     {
@@ -115,7 +114,9 @@ public class GameManager : MonoBehaviour
         gunManager.SetActive(false);
         scoreText.text = "Kills:" + totalyKilled.ToString();
         GameOverPanel.SetActive(true);
+        inventoryPanel.SetActive(false);
         joyStick.SetActive(false);
+        openInventoryButton.SetActive(false);
         //StartCoroutine(NoiseMaker());
         
     }
@@ -153,4 +154,24 @@ public class GameManager : MonoBehaviour
     //        yield return wait; 
     //    }
     //}
+
+    public void CloseInventory()
+    {
+        Time.timeScale = 1;
+        joyStick.SetActive(true);
+        inventoryPanel.SetActive(false);
+      openInventoryButton.SetActive(true);
+    }
+
+    public void OpenInventory()
+    {
+        Time.timeScale = 0.1f;
+        openInventoryButton.SetActive(false);
+        mainMenueUI.SetActive(false);
+        joyStick.SetActive(false);
+        inventoryPanel.SetActive(true);
+        inventoryManager.exchangeSlot.SetActive(false);
+    }
+
+
 }

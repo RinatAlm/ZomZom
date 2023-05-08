@@ -41,22 +41,29 @@ public class InventoryManager : MonoBehaviour
 
     public void SetWeapon()
     {
-        leftBottom.weapon = leftBottomSlot.GetComponent<Weapon>();
-        rightBottom.weapon = rightBottomSlot.GetComponent<Weapon>();
-        leftTop.weapon = leftTopSlot.GetComponent<Weapon>();
-        rightTop.weapon = rightTopSlot.GetComponent<Weapon>();
+        leftBottom.weapon = leftBottomSlot.GetComponent<WeaponSlot>().weapon;
+        rightBottom.weapon = rightBottomSlot.GetComponent<WeaponSlot>().weapon;
+        leftTop.weapon = leftTopSlot.GetComponent<WeaponSlot>().weapon;
+        rightTop.weapon = rightTopSlot.GetComponent<WeaponSlot>().weapon;
     }
 
 
     void Start()
     {
         exchangeButton.SetActive(false);
+        SetWeapon();
     }
     public void ShowWeaponInfo()
     {
         if(weaponsExchange.Count == 0)
         {
             DoNotShowDescription();
+        }
+        else if(weaponsExchange.Count > 2)
+        {
+
+            weaponsExchange[0].Select();
+
         }
         else
         {
@@ -154,6 +161,8 @@ public class InventoryManager : MonoBehaviour
         exchangeButton.SetActive(false);
         descriptionPanels.SetActive(false);
         isSwapping = false;
+        SetWeapon();
     }
 
+   
 }
