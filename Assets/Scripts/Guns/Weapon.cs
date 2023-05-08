@@ -15,7 +15,7 @@ public class Weapon : MonoBehaviour
     public int bulletSpeed;
     public float spreadAngle;
     public float numOfBulletsPerPressing;
-    public int numOfAimsToDestr;
+    public int penetration;
     public Sound shootSound;
 
     public void Start()

@@ -25,7 +25,7 @@ public class BulletSpawnManager : MonoBehaviour
             //Actions
             bullet.bulletOfArm = gunnerArm;
             bullet.transform.position = InitialPosition;
-            bullet.numOfAimsToDestr = gunnerArm.weapon.numOfAimsToDestr;
+            bullet.numOfAimsToDestr = gunnerArm.weapon.penetration;
             bullet.bulletBody.velocity = direction  * gunnerArm.weapon.bulletSpeed;
            
 

@@ -103,6 +103,7 @@ public class GameManager : MonoBehaviour
         gameUI.SetActive(true);
         joyStick.SetActive(true);
         GameOverPanel.SetActive(false);
+        inventoryPanel.SetActive(false);
         totalyKilled = 0;
     }
 

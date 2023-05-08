@@ -8,24 +8,50 @@ public class WeaponSlot : MonoBehaviour
 {
     public Weapon weapon;
     public Image WeaponImageUI;
-    public GameObject pickedObject;
-    public Button button;
+
+    [Header("Slot Interaction")]
+    public Sprite NotActiveSlotSprite;
+    public Sprite ActiveSlotSprite;
+    public bool isSelected = false;
+    public InventoryManager inventoryManager;
+    GameObject pickedObject;
+    Button button;
+
 
     private void Start()
     {
         pickedObject = gameObject;
         button = gameObject.GetComponent<Button>();
-        button.onClick.AddListener(() => { LogName(pickedObject); });
+        button.onClick.AddListener(() => { Select(); });
+        SetWeaponImage();
     }
-    public void LogName(GameObject pickedObject)
+    public void Select()
     {
-        Debug.Log(pickedObject);
+        isSelected = !isSelected;
+        if(isSelected)
+        {
+            gameObject.GetComponent<Image>().sprite = ActiveSlotSprite;
+            inventoryManager.weaponsExchange.Add(this);
+            if(!inventoryManager.isSwapping)
+            inventoryManager.ShowWeaponInfo();
+        }
+        else
+        {
+            gameObject.GetComponent<Image>().sprite = NotActiveSlotSprite;
+            inventoryManager.weaponsExchange.Remove(this);
+            if (!inventoryManager.isSwapping)
+                inventoryManager.ShowWeaponInfo();
+        }
+       
     }
 
 
     [ContextMenu("SetImage")]
     public void SetWeaponImage()
     {
-        WeaponImageUI.sprite = weapon.weaponSprite;
+        if (weapon.weaponSprite != inventoryManager.emptySprite)
+            WeaponImageUI.sprite = weapon.weaponSprite;
+        else
+            WeaponImageUI.sprite = inventoryManager.emptySprite;
     }     
     }
