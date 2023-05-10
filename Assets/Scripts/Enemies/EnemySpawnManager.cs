@@ -15,7 +15,7 @@ public class EnemySpawnManager : MonoBehaviour
     public float spawnDelay;
     public List<Enemy> enemyPrefabs = new List<Enemy>();
     public SpawnMethod EnemySpawnMethod = SpawnMethod.RoundRobin;
-    NavMeshTriangulation triangulation;
+    public NavMeshTriangulation triangulation;
     public bool isSpawnCoroutineRun = false;
     private Dictionary<int, ObjectPool> enemyObjectPools = new Dictionary<int, ObjectPool>();
     public int spawnedEnemies = 0;

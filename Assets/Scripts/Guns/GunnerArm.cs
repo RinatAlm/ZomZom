@@ -26,28 +26,31 @@ public class GunnerArm : MonoBehaviour
     }
 
 
-    private void Update()
+    private void LateUpdate()
     {   
-        if(targetEnemy == null)
-        {
-            shootTimer = weapon.delay;
-        }
-        if (weapon != null && targetEnemy != null && shots != weapon.numberOfTriggerPressing)
-        {
-            shootTimer -= Time.deltaTime;
-            if (shootTimer <= 0)
+        
+            if (targetEnemy == null)
             {
                 shootTimer = weapon.delay;
-                shots++;
-                Shoot();
-                if (shots == weapon.numberOfTriggerPressing)
-                {
-                    shots = 0;
-                    shootTimer = weapon.shootTimerMax;
-                }
             }
+            if (weapon != null && targetEnemy != null && shots != weapon.numberOfTriggerPressing)
+            {
+                shootTimer -= Time.deltaTime;
+                if (shootTimer <= 0)
+                {
+                    shootTimer = weapon.delay;
+                    shots++;
+                    Shoot();
+                    if (shots == weapon.numberOfTriggerPressing)
+                    {
+                        shots = 0;
+                        shootTimer = weapon.shootTimerMax;
+                    }
+                }
 
-        }
+            }
+        
+       
     }
 
     public void Shoot()

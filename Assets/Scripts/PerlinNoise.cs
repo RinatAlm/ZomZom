@@ -1,22 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine;
 
-public class PerlinNoise : MonoBehaviour
+public class PerlinNoise
 {
     
-    int width = 256;
-    int height = 256;
+    int width = 16;
+    int height = 16;
 
     public float scale = 5;
     public float offsetX;
     public float offsetY;
-
-    void Start()
-    {
-        //Renderer renderer = GetComponent<Renderer>();
-        //renderer.material.mainTexture = GenerateTexture();
-    }
 
     public Texture2D GenerateTexture()
     {

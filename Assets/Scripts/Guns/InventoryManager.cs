@@ -38,6 +38,7 @@ public class InventoryManager : MonoBehaviour
     public List<WeaponSlot> weaponsExchange = new List<WeaponSlot>();
     public Sprite emptySprite;
     public bool isSwapping = false;
+    public Weapon emptyWeapon;
 
     public void SetWeapon()
     {
@@ -164,5 +165,10 @@ public class InventoryManager : MonoBehaviour
         SetWeapon();
     }
 
+    public void RemoveWeaponExchangeSlot()
+    {
+        exchangeSlot.GetComponent<WeaponSlot>().weapon = emptyWeapon;
+        exchangeSlot.GetComponent<WeaponSlot>().SetWeaponImage();
+    }
    
 }

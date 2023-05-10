@@ -2,13 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine;
+using UnityEngine.AI;
+
 
 public class GameManager : MonoBehaviour
 {
     //[Header("Noise")]
     //PerlinNoise noise = new PerlinNoise();
-    //public Image gameOverNoiseImage;
+    //public Volume volume;
     //[Space(20)]
     [Header("UI components")]
     public GameObject gameUI;
@@ -21,11 +25,16 @@ public class GameManager : MonoBehaviour
     public GameObject gunManager;
     public GameObject openInventoryButton;
     public InventoryManager inventoryManager;
-    public Text scoreText;
-    [Space(20)]
-    [Header("UI GunManager")]
     public GameObject inventoryPanel;
+    public Text scoreText;
+    public GameObject statsPanel;
+    public GameObject expStatSlider;
+    public GameObject timeStatText;
+    public GameObject levelStatText;
+    
+
     [Space(20)]
+
     public List<Vector3> positionsToAttend = new List<Vector3>();
     public Vector3 destination;
     public Vector3 positionChange;
@@ -35,7 +44,18 @@ public class GameManager : MonoBehaviour
     public float gameOverTimeScale = 0.1f;
     public int GameOverTicker = 3;
     public static int totalyKilled;
+    public GameObject airDropObjectReference;
+    public int expPercentage;
+    public  int level;
+    public List<GameObject> weapons = new List<GameObject>();
+    public GameObject airDropPrefab;
+    public GameObject guns;
+
+    private NavMeshTriangulation triangulation;
+    private int seconds;
+    private int minutes;
     
+
     private void Awake()
     {
         Time.timeScale = 0;
@@ -43,25 +63,19 @@ public class GameManager : MonoBehaviour
         mainMenueUI.SetActive(true);
         gameUI.SetActive(false);
         joyStick.SetActive(true);
-       
-
-
+        statsPanel.SetActive(false);
+        triangulation = NavMesh.CalculateTriangulation();
     }
     private void Start()
     {
-          
+       // StartCoroutine(NoiseMaker());
         UICamera.transform.position = positionsToAttend[0];
         destination = positionsToAttend[0];
         CalculateNextPoint();
     }
-
-    private void Update()
-    {
-      
-    }
     private void LateUpdate()
     {
-        if(Time.timeScale == 0)
+        if (Time.timeScale == 0)
         {
             UICamera.transform.position += positionChange * Time.unscaledDeltaTime;
             if ((destination - UICamera.transform.position).magnitude <= 0.1f)
@@ -85,14 +99,14 @@ public class GameManager : MonoBehaviour
                 isChanged = false;
             }
         }
-       
+
     }
 
     public void CalculateNextPoint()
     {
-        positionChange = (destination - UICamera.transform.position)/ positionChangeSpeed;
+        positionChange = (destination - UICamera.transform.position) / positionChangeSpeed;
     }
-    
+
 
     public void StartTheGame()
     {
@@ -103,7 +117,10 @@ public class GameManager : MonoBehaviour
         joyStick.SetActive(true);
         GameOverPanel.SetActive(false);
         inventoryPanel.SetActive(false);
+        statsPanel.SetActive(true);
         totalyKilled = 0;
+        StartCoroutine(ProgressTimer());
+       
     }
 
     public void GameOver()
@@ -118,13 +135,13 @@ public class GameManager : MonoBehaviour
         joyStick.SetActive(false);
         openInventoryButton.SetActive(false);
         //StartCoroutine(NoiseMaker());
-        
+
     }
-  
+
     IEnumerator GameOverTimer(int seconds)
     {
         int counter = seconds;
-        while(counter>0)
+        while (counter > 0)
         {
             yield return new WaitForSecondsRealtime(1);
             //Do stuff
@@ -133,34 +150,52 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0;
     }
 
-    //public void BlackWhiteNoise()
-    //{
-    //    noise.offsetX = Random.Range(0, 9999f);
-    //    noise.offsetY = Random.Range(0, 9999f);
-    //    gameOverNoiseImage.material.mainTexture = noise.GenerateTexture();
-    //}
+    
 
     public void Restart()
     {
         SceneManager.LoadScene("GameScene");
     }
 
+    //public void BlackWhiteNoise()
+    //{
+    //    noise.offsetX = Random.Range(0, 9999f);
+    //    noise.offsetY = Random.Range(0, 9999f);
+    //    if(volume.profile.TryGet<Bloom>(out Bloom bloom))
+    //    {
+    //        bloom.dirtTexture = new TextureParameter(noise.GenerateTexture());
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("Error");
+    //    }
+       
+    //}
+    
     //IEnumerator NoiseMaker()
     //{
     //    WaitForSecondsRealtime wait = new WaitForSecondsRealtime(0.1f);
-    //    while(true)
+    //    while (true)
     //    {
     //        BlackWhiteNoise();
-    //        yield return wait; 
+    //        yield return wait;
     //    }
     //}
 
     public void CloseInventory()
     {
+
         Time.timeScale = 1;
         joyStick.SetActive(true);
         inventoryPanel.SetActive(false);
-      openInventoryButton.SetActive(true);
+        openInventoryButton.SetActive(true);
+        statsPanel.SetActive(true);
+        if (airDropObjectReference != null)
+        {
+            inventoryManager.weaponExchangeSlot.SetActive(false);
+            inventoryManager.RemoveWeaponExchangeSlot();
+            Destroy(airDropObjectReference.gameObject);
+        }
     }
 
     public void OpenInventory()
@@ -171,7 +206,76 @@ public class GameManager : MonoBehaviour
         joyStick.SetActive(false);
         inventoryPanel.SetActive(true);
         inventoryManager.exchangeSlot.SetActive(false);
+        statsPanel.SetActive(false);
     }
 
+    public void IncreaseLevelBar()
+    {
+        expStatSlider.GetComponent<Slider>().value++;
+        if (expStatSlider.GetComponent<Slider>().value == expStatSlider.GetComponent<Slider>().maxValue)
+        {
+            expStatSlider.GetComponent<Slider>().value = 0;
+            IncreaseLevel();
+        }
+       
+
+    }
+
+    public void IncreaseLevel()
+    {
+
+        expStatSlider.GetComponent<Slider>().maxValue += expStatSlider.GetComponent<Slider>().maxValue * expPercentage/100;
+        level++;
+        levelStatText.GetComponent<Text>().text = "LVL:" + level;
+        if(level%1==0)
+        {
+            if (airDropObjectReference == null)
+            CallAirDrop();
+        }
+    }
+
+    IEnumerator ProgressTimer()
+    {
+        while (Time.timeScale != 0)
+        {
+            yield return new WaitForSecondsRealtime(1);
+            //Do stuff
+            seconds++;
+            if (seconds >= 60)
+            {
+                seconds = 0;
+                minutes++;
+            }
+            if (minutes >= 0 && minutes < 10)
+            {
+                timeStatText.GetComponent<Text>().text = "0" + minutes.ToString() + ":";
+            }
+            else
+            {
+                timeStatText.GetComponent<Text>().text = minutes.ToString() + ":";
+            }
+            if(seconds>=0 && seconds<10)
+            {
+                timeStatText.GetComponent<Text>().text += "0" + seconds.ToString() ;
+            }
+            else
+            {
+                timeStatText.GetComponent<Text>().text += seconds.ToString();
+            }
+        }
+       
+    }
+
+    public void CallAirDrop()
+    {
+        AudioManager.instance.Play("AirplaneFlyBy");
+        int VertexIndex = Random.Range(0, triangulation.vertices.Length);
+        NavMeshHit Hit;
+        if (NavMesh.SamplePosition(triangulation.vertices[VertexIndex], out Hit, 2f, -1))
+        {
+            airDropObjectReference = Instantiate(airDropPrefab, airDropPrefab.transform.position, airDropPrefab.transform.rotation);
+            airDropObjectReference.GetComponent<Airdrop>().box.Warp(Hit.position);
+        }
+    }
 
 }

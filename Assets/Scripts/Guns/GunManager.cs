@@ -7,6 +7,7 @@ public class GunManager : MonoBehaviour
     public List<Enemy> enemies = new List<Enemy> ();
     public List<GameObject> gunnerArms = new List<GameObject> ();
     public Sprite emptySprite;
+    public GameManager gameManager;
     
     private void OnTriggerEnter(Collider other)//Mark enemy on entering the trigger
     {

@@ -16,8 +16,8 @@ public class Enemy : PoolableObject
 
     private void Awake()
     {
-        spawnManager = GameObject.FindObjectOfType<EnemySpawnManager>().GetComponent<EnemySpawnManager>();
-        gunManager = GameObject.FindObjectOfType<GunManager>().GetComponent<GunManager>();
+        spawnManager = FindObjectOfType<EnemySpawnManager>().GetComponent<EnemySpawnManager>();
+        gunManager = FindObjectOfType<GunManager>().GetComponent<GunManager>();
     }
     public override void OnDisable()
     {
@@ -54,6 +54,7 @@ public class Enemy : PoolableObject
                 {                  
                     arm.ResetTarget();                                   
                 }
+                gunManager.gameManager.IncreaseLevelBar();
                 gunManager.RemoveTarget(this);
                 Disable();
 

@@ -14,16 +14,14 @@ public class WeaponSlot : MonoBehaviour
     public Sprite ActiveSlotSprite;
     public bool isSelected = false;
     public InventoryManager inventoryManager;
-    GameObject pickedObject;
     Button button;
 
-
     private void Start()
-    {
-        pickedObject = gameObject;
+    {       
         button = gameObject.GetComponent<Button>();
         button.onClick.AddListener(() => { Select(); });
         SetWeaponImage();
+
     }
     public void Select()
     {
