@@ -6,14 +6,11 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine;
 using UnityEngine.AI;
+using System;
 
 
 public class GameManager : MonoBehaviour
 {
-    //[Header("Noise")]
-    //PerlinNoise noise = new PerlinNoise();
-    //public Volume volume;
-    //[Space(20)]
     [Header("UI components")]
     public GameObject gameUI;
     public GameObject GameOverPanel;
@@ -31,10 +28,9 @@ public class GameManager : MonoBehaviour
     public GameObject expStatSlider;
     public GameObject timeStatText;
     public GameObject levelStatText;
-    
+
 
     [Space(20)]
-
     public List<Vector3> positionsToAttend = new List<Vector3>();
     public Vector3 destination;
     public Vector3 positionChange;
@@ -46,15 +42,16 @@ public class GameManager : MonoBehaviour
     public static int totalyKilled;
     public GameObject airDropObjectReference;
     public int expPercentage;
-    public  int level;
+    public int level;
     public List<GameObject> weapons = new List<GameObject>();
     public GameObject airDropPrefab;
+    public GameObject ArrowObjectSet;
     public GameObject guns;
 
     private NavMeshTriangulation triangulation;
     private int seconds;
     private int minutes;
-    
+
 
     private void Awake()
     {
@@ -68,14 +65,14 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-       // StartCoroutine(NoiseMaker());
+        // StartCoroutine(NoiseMaker());
         UICamera.transform.position = positionsToAttend[0];
         destination = positionsToAttend[0];
         CalculateNextPoint();
     }
     private void LateUpdate()
     {
-        if (Time.timeScale == 0)
+        if (Time.timeScale == 0)//Moving camera from place to place in Menue mode
         {
             UICamera.transform.position += positionChange * Time.unscaledDeltaTime;
             if ((destination - UICamera.transform.position).magnitude <= 0.1f)
@@ -120,7 +117,7 @@ public class GameManager : MonoBehaviour
         statsPanel.SetActive(true);
         totalyKilled = 0;
         StartCoroutine(ProgressTimer());
-       
+
     }
 
     public void GameOver()
@@ -134,7 +131,6 @@ public class GameManager : MonoBehaviour
         inventoryPanel.SetActive(false);
         joyStick.SetActive(false);
         openInventoryButton.SetActive(false);
-        //StartCoroutine(NoiseMaker());
 
     }
 
@@ -150,38 +146,12 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0;
     }
 
-    
+
 
     public void Restart()
     {
         SceneManager.LoadScene("GameScene");
     }
-
-    //public void BlackWhiteNoise()
-    //{
-    //    noise.offsetX = Random.Range(0, 9999f);
-    //    noise.offsetY = Random.Range(0, 9999f);
-    //    if(volume.profile.TryGet<Bloom>(out Bloom bloom))
-    //    {
-    //        bloom.dirtTexture = new TextureParameter(noise.GenerateTexture());
-    //    }
-    //    else
-    //    {
-    //        Debug.Log("Error");
-    //    }
-       
-    //}
-    
-    //IEnumerator NoiseMaker()
-    //{
-    //    WaitForSecondsRealtime wait = new WaitForSecondsRealtime(0.1f);
-    //    while (true)
-    //    {
-    //        BlackWhiteNoise();
-    //        yield return wait;
-    //    }
-    //}
-
     public void CloseInventory()
     {
 
@@ -217,20 +187,20 @@ public class GameManager : MonoBehaviour
             expStatSlider.GetComponent<Slider>().value = 0;
             IncreaseLevel();
         }
-       
+
 
     }
 
     public void IncreaseLevel()
     {
 
-        expStatSlider.GetComponent<Slider>().maxValue += expStatSlider.GetComponent<Slider>().maxValue * expPercentage/100;
+        expStatSlider.GetComponent<Slider>().maxValue += expStatSlider.GetComponent<Slider>().maxValue * expPercentage / 100;
         level++;
         levelStatText.GetComponent<Text>().text = "LVL:" + level;
-        if(level%1==0)
+        if (level % 1 == 0)
         {
             if (airDropObjectReference == null)
-            CallAirDrop();
+                CallAirDrop();
         }
     }
 
@@ -254,27 +224,39 @@ public class GameManager : MonoBehaviour
             {
                 timeStatText.GetComponent<Text>().text = minutes.ToString() + ":";
             }
-            if(seconds>=0 && seconds<10)
+            if (seconds >= 0 && seconds < 10)
             {
-                timeStatText.GetComponent<Text>().text += "0" + seconds.ToString() ;
+                timeStatText.GetComponent<Text>().text += "0" + seconds.ToString();
             }
             else
             {
                 timeStatText.GetComponent<Text>().text += seconds.ToString();
             }
         }
-       
+
     }
 
     public void CallAirDrop()
     {
         AudioManager.instance.Play("AirplaneFlyBy");
-        int VertexIndex = Random.Range(0, triangulation.vertices.Length);
+        int VertexIndex = UnityEngine.Random.Range(0, triangulation.vertices.Length);
         NavMeshHit Hit;
         if (NavMesh.SamplePosition(triangulation.vertices[VertexIndex], out Hit, 2f, -1))
         {
-            airDropObjectReference = Instantiate(airDropPrefab, airDropPrefab.transform.position, airDropPrefab.transform.rotation);
+
+            airDropObjectReference = Instantiate(airDropPrefab, airDropPrefab.transform.position, airDropPrefab.transform.rotation);//SPAWNING AIRDROP 
             airDropObjectReference.GetComponent<Airdrop>().box.Warp(Hit.position);
+
+            airDropObjectReference.GetComponent<Airdrop>().ArrowObjectSet = ArrowObjectSet;//AIRDROP VARIABLES ARE SET
+            airDropObjectReference.GetComponent<Airdrop>().pointerIcon = ArrowObjectSet.GetComponent<PointerIcon>();
+            airDropObjectReference.GetComponent<Airdrop>().pointerIcon.Show();
+            airDropObjectReference.GetComponent<Airdrop>().playerTransform = GameObject.Find("Character").GetComponent<Transform>();
+            airDropObjectReference.GetComponent<Airdrop>()._camera = GameObject.Find("Main Camera").GetComponent<Camera>();
+            airDropObjectReference.GetComponent<Airdrop>().worldPointer = GameObject.Find("3DAirdropPointer").GetComponent<Transform>();
+            airDropObjectReference.GetComponent<Airdrop>().arrowIconTransform = GameObject.Find("ArrowRotator").GetComponent<RectTransform>();
+            airDropObjectReference.GetComponent<Airdrop>().gameManager = FindObjectOfType<GameManager>();
+            airDropObjectReference.GetComponent<Airdrop>().isReady = true;
+            airDropObjectReference.GetComponent<Airdrop>().gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         }
     }
 

@@ -101,8 +101,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84825be19860c5342adf02b40659f2d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weapon: {fileID: 0}
   gameManager: {fileID: 0}
   box: {fileID: 3746122414684751353}
+  playerTransform: {fileID: 0}
+  _camera: {fileID: 0}
+  ArrowObjectSet: {fileID: 0}
+  worldPointer: {fileID: 0}
+  iconTransform: {fileID: 0}
+  arrowIconTransform: {fileID: 0}
+  arrowOffset: 0.75
 --- !u!135 &3101886121217691606
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -232,6 +240,10 @@ PrefabInstance:
     - target: {fileID: 6772456597184537908, guid: f5388496bc48ecd4b9ef61923783b6b9, type: 3}
       propertyPath: m_Mesh
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6772456597184537908, guid: f5388496bc48ecd4b9ef61923783b6b9, type: 3}
+      propertyPath: m_VersionIndex
+      value: 302
       objectReference: {fileID: 0}
     - target: {fileID: 6772456597184538062, guid: f5388496bc48ecd4b9ef61923783b6b9, type: 3}
       propertyPath: m_Name
