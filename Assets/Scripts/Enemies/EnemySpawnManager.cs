@@ -15,17 +15,28 @@ public class EnemySpawnManager : MonoBehaviour
     public float spawnDelay;
     public List<Enemy> enemyPrefabs = new List<Enemy>();
     public SpawnMethod EnemySpawnMethod = SpawnMethod.RoundRobin;
-    public NavMeshTriangulation triangulation;
+
+    //   public NavMeshTriangulation triangulation;
     public bool isSpawnCoroutineRun = false;
     private Dictionary<int, ObjectPool> enemyObjectPools = new Dictionary<int, ObjectPool>();
     public int spawnedEnemies = 0;
 
+    [SerializeField]
+    float minRad = 2;
+    [SerializeField]
+    float maxRad = 5;
+    [SerializeField]
+    private float sphereCheckRadius;
+    public Vector3 spawnPos;
+
+    Collider[] hitColliders;
+
 
     private void Start()
     {
-        if(Time.timeScale == 1)
+        if (Time.timeScale == 1)
         {
-          
+
             for (int i = 0; i < numberOfEnemiesToSpawn; i++)
             {
                 if (EnemySpawnMethod == SpawnMethod.RoundRobin)
@@ -44,8 +55,7 @@ public class EnemySpawnManager : MonoBehaviour
             for (int i = 0; i < enemyPrefabs.Count; i++)
             {
                 enemyObjectPools.Add(i, ObjectPool.CreateInstance(enemyPrefabs[i], numberOfEnemiesToSpawn));
-            }
-            triangulation = NavMesh.CalculateTriangulation();
+            }         
         }
 
 
@@ -55,11 +65,11 @@ public class EnemySpawnManager : MonoBehaviour
 
     private void Update()
     {
-        if(Time.timeScale == 0)
+        if (Time.timeScale == 0)
         {
 
         }
-        else if(Time.timeScale == 1)
+        else if (Time.timeScale == 1)
         {
             if (!isSpawnCoroutineRun)
             {
@@ -70,7 +80,7 @@ public class EnemySpawnManager : MonoBehaviour
                 Exit();
             }
         }
-        
+
     }
 
     IEnumerator SpawnEnemies()
@@ -100,30 +110,40 @@ public class EnemySpawnManager : MonoBehaviour
         DoSpawnEnemy(spawnIndex);
     }
 
-    private  void SpawnRandomEnemy()
+    private void SpawnRandomEnemy()
     {
         DoSpawnEnemy(Random.Range(0, enemyPrefabs.Count));
     }
 
     private void DoSpawnEnemy(int spawnIndex)
     {
-    PoolableObject poolableObject = enemyObjectPools[spawnIndex].GetObject();
+        PoolableObject poolableObject = enemyObjectPools[spawnIndex].GetObject();
         if (poolableObject != null)
         {
             Enemy enemy = poolableObject.GetComponent<Enemy>();
-           
-            int VertexIndex = Random.Range(0, triangulation.vertices.Length);
-            NavMeshHit Hit;
-            if (NavMesh.SamplePosition(triangulation.vertices[VertexIndex],out Hit,2f,-1))
+
+            //int VertexIndex = Random.Range(0, triangulation.vertices.Length);
+            //NavMeshHit Hit;
+            //if (NavMesh.SamplePosition(triangulation.vertices[VertexIndex],out Hit,2f,-1))
+            //{
+            //    enemy.navComponent.Warp(Hit.position);
+            //    enemy.enemyMovement.target = player;
+            //    enemy.navComponent.enabled = true;
+            //    enemy.enemyMovement.StartChasing();
+            //}
+            spawnPos = player.position + CalculateSpawnPosition();
+            hitColliders = Physics.OverlapSphere(spawnPos, sphereCheckRadius);
+            if (hitColliders.Length == 1)//Mesh is in count
             {
-                enemy.navComponent.Warp(Hit.position);
+                enemy.transform.position = spawnPos;
                 enemy.enemyMovement.target = player;
                 enemy.navComponent.enabled = true;
                 enemy.enemyMovement.StartChasing();
             }
             else
             {
-                Debug.LogWarning("Unable to place Agent on nav mesh");
+               // Debug.LogWarning("Unable to place Agent on nav mesh");
+                return;
             }
         }
         else
@@ -132,10 +152,16 @@ public class EnemySpawnManager : MonoBehaviour
         }
     }
 
+    Vector3 CalculateSpawnPosition()
+    {
+        Vector3 offset = Random.onUnitSphere * Random.Range(minRad, maxRad);
+        return new Vector3(offset.x, 0, offset.z);//Special offset
+    }
+
     public enum SpawnMethod
     {
-    RoundRobin,
-    Random
+        RoundRobin,
+        Random
     }
 
     public void Exit()
