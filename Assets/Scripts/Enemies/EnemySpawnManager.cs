@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -28,7 +27,6 @@ public class EnemySpawnManager : MonoBehaviour
     [SerializeField]
     private float sphereCheckRadius;
     public Vector3 spawnPos;
-
     Collider[] hitColliders;
 
 
@@ -57,10 +55,6 @@ public class EnemySpawnManager : MonoBehaviour
                 enemyObjectPools.Add(i, ObjectPool.CreateInstance(enemyPrefabs[i], numberOfEnemiesToSpawn));
             }         
         }
-
-
-
-
     }
 
     private void Update()
@@ -131,9 +125,8 @@ public class EnemySpawnManager : MonoBehaviour
             //    enemy.navComponent.enabled = true;
             //    enemy.enemyMovement.StartChasing();
             //}
-            spawnPos = player.position + CalculateSpawnPosition();
-            hitColliders = Physics.OverlapSphere(spawnPos, sphereCheckRadius);
-            if (hitColliders.Length == 1)//Mesh is in count
+            repeat:
+            if (FindAvailablePosition())
             {
                 enemy.transform.position = spawnPos;
                 enemy.enemyMovement.target = player;
@@ -142,9 +135,9 @@ public class EnemySpawnManager : MonoBehaviour
             }
             else
             {
-               // Debug.LogWarning("Unable to place Agent on nav mesh");
-                return;
+                goto repeat;
             }
+     
         }
         else
         {
@@ -152,12 +145,27 @@ public class EnemySpawnManager : MonoBehaviour
         }
     }
 
-    Vector3 CalculateSpawnPosition()
+    Vector3 CalculateSpawnOffset()
     {
         Vector3 offset = Random.onUnitSphere * Random.Range(minRad, maxRad);
-        return new Vector3(offset.x, 0, offset.z);//Special offset
+        return offset;
     }
 
+   
+    private bool FindAvailablePosition()
+    {
+        spawnPos = player.position + CalculateSpawnOffset();
+        spawnPos = new Vector3(spawnPos.x, 0, spawnPos.z);
+        hitColliders = Physics.OverlapSphere(spawnPos, sphereCheckRadius);
+        if(hitColliders.Length == 1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     public enum SpawnMethod
     {
         RoundRobin,

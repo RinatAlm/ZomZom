@@ -3,22 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EnemyHealth : MonoBehaviour
-{  
-    public float health = 100f;
+public class EnemyHealth : MonoBehaviour, IDamagable
+{
+    public float Health { get { return _health; } set { _health = value; } }
     public float maxHealth;
     public Slider healthSlider;
+    private float _health;
     private void Start()
     {
-        maxHealth = health;
+        Health = maxHealth;
         healthSlider.gameObject.SetActive(false);
     }
 
-    public virtual void TakeDamage(float damage)
+    #region Idamagable Interface implementation
+    public void TakeDamage(float damage)
     {
-        health -= damage;
-        healthSlider.value = health;//Displaying Health 
-        if (health == maxHealth)
+        Health -= damage;
+        healthSlider.value = Health;//Displaying Health 
+        if (Health == maxHealth)
         {
             healthSlider.gameObject.SetActive(false);
         }
@@ -27,4 +29,5 @@ public class EnemyHealth : MonoBehaviour
             healthSlider.gameObject.SetActive(true);
         }     
     }
+    #endregion
 }

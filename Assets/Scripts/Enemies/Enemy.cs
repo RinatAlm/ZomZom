@@ -22,7 +22,7 @@ public class Enemy : PoolableObject
     public override void OnDisable()
     {
         base.OnDisable();
-        enemyHealth.health = 100;
+        enemyHealth.Health = 100;
         if(Time.timeScale != 0)
         {
             spawnManager.spawnedEnemies--;
@@ -47,7 +47,7 @@ public class Enemy : PoolableObject
         {
             Bullet bullet = other.GetComponent<Bullet>();
             enemyHealth.TakeDamage(bullet.bulletOfArm.weapon.damage);
-            if (enemyHealth.health <= 0)
+            if (enemyHealth.Health <= 0)
             {
                
                 foreach (GunnerArm arm in gunnerArms)

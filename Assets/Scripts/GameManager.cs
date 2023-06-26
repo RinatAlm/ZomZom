@@ -11,6 +11,7 @@ using System;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
     [Header("UI components")]
     public GameObject gameUI;
     public GameObject GameOverPanel;
@@ -55,6 +56,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        instance = this;
         Time.timeScale = 0;
         CharacterCamera.transform.SetParent(UICamera.transform);
         mainMenueUI.SetActive(true);

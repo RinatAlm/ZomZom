@@ -1,21 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
-public class PlayerHealth : EnemyHealth
+public class PlayerHealth : MonoBehaviour, IDamagable
 {
-    public GameManager gameManager;
+ 
+    public float maxHealth;
+    public Slider healthSlider;
+    public float Health { get { return _health; } set { _health = value; } }
+    private float _health;
     private void Start()
     {
-        gameManager = FindObjectOfType<GameManager>();
+        _health = maxHealth;
+        healthSlider.gameObject.SetActive(false);
     }
-    public override void TakeDamage(float damage)
+
+    #region Idamagable Interface implementation
+    public void TakeDamage(float damage)
     {
-        base.TakeDamage(damage);
-        if(health<=0)
+        _health -= damage;
+        healthSlider.value = _health;//Displaying Health 
+        if (_health == maxHealth)
         {
-            
-            gameManager.GameOver();
+            healthSlider.gameObject.SetActive(false);
+        }
+        else
+        {
+            healthSlider.gameObject.SetActive(true);
+        }
+        if (_health <= 0)
+        {          
+            GameManager.instance.GameOver();
         }
     }
+    #endregion
 }
