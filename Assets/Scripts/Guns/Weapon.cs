@@ -18,6 +18,8 @@ public class Weapon : MonoBehaviour
     public int penetration;
     public Sound shootSound;
     public string weaponDescription;
+    public bool isRickochetBullet;
+    public GameObject boomPrefab;
 
     public void Start()
     {
@@ -33,11 +35,4 @@ public class Weapon : MonoBehaviour
             return;
         shootSound.source.Play();
     }
-    public void SetPosition(Vector3 startPos)//Setting positions for bullets
-    {
-        bullet.GetComponent<Bullet>().SetStartPosition(startPos);     
-        
-    }
-
-
 }

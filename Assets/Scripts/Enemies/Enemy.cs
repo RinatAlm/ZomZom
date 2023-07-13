@@ -6,28 +6,26 @@ using UnityEngine.UI;
 
 public class Enemy : PoolableObject
 {
-    public List<GunnerArm> gunnerArms = new List<GunnerArm>();
+    public List<GunnerArm> gunnerArms = new();
+    public HashSet <GunManager> gunManagers = new();
     public EnemyHealth enemyHealth;
     public EnemyMovement enemyMovement;
     public NavMeshAgent navComponent;
     private EnemySpawnManager spawnManager;
-    private GunManager gunManager;
     public float Damage;
 
     private void Awake()
     {
-        spawnManager = FindObjectOfType<EnemySpawnManager>().GetComponent<EnemySpawnManager>();
-        gunManager = FindObjectOfType<GunManager>().GetComponent<GunManager>();
+        spawnManager = FindObjectOfType<EnemySpawnManager>().GetComponent<EnemySpawnManager>();       
     }
     public override void OnDisable()
     {
         base.OnDisable();
-        enemyHealth.Health = 100;
+        enemyHealth.Health = enemyHealth.maxHealth;//Give enemyHealth back before respawning
         if(Time.timeScale != 0)
         {
-            spawnManager.spawnedEnemies--;
-        }
-       
+            spawnManager.DecrementEnemiesNumber();
+        }      
     }
 
     public void OnEnable()
@@ -35,35 +33,49 @@ public class Enemy : PoolableObject
         enemyHealth.TakeDamage(0);
     }
 
-    public void Disable()
+    public void Disable(bool isKilled)
     {
-        GameManager.totalyKilled++;
+        if(isKilled)
+        {
+            GameManager.totalyKilled++;
+        }
+        else
+        {
+        //Remove enemy
+        }
         gameObject.SetActive(false);
     }
 
     public void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Bullet") == true)
+        if (other.CompareTag("Bullet"))
         {
             Bullet bullet = other.GetComponent<Bullet>();
-            enemyHealth.TakeDamage(bullet.bulletOfArm.weapon.damage);
-            if (enemyHealth.Health <= 0)
-            {
-               
-                foreach (GunnerArm arm in gunnerArms)
-                {                  
-                    arm.ResetTarget();                                   
-                }
-                gunManager.gameManager.IncreaseLevelBar();
-                gunManager.RemoveTarget(this);
-                Disable();
-
-            }
-            bullet.numOfAimsToDestr--;
-            if(bullet.numOfAimsToDestr<=0)
-            bullet.Disable();
-           
-            
+            BulletTouch(bullet);
         }
+    }
+
+    public void BulletTouch(Bullet bullet)
+    {     
+        enemyHealth.TakeDamage(bullet.BulletHit());//Take Damage from BulletHit
+        gunManagers.Add(bullet.bulletOfArm.gunManager);
+        if (enemyHealth.Health <= 0)
+        {
+            foreach (GunManager gunManager in gunManagers)
+            {
+                gunManager.RemoveTarget(this);               
+            }
+            gunManagers.Clear();
+            foreach (GunnerArm arm in gunnerArms)
+            {
+                arm.ResetTarget();
+            }
+            gunnerArms.Clear();
+            GameManager.instance.IncreaseLevelBar();
+            Disable(true);
+        }
+        bullet.numOfAimsToDestr--;
+        if (bullet.numOfAimsToDestr <= 0)
+            bullet.Disable();
     }
 }

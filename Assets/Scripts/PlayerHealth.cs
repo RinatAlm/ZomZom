@@ -7,32 +7,60 @@ public class PlayerHealth : MonoBehaviour, IDamagable
 {
  
     public float maxHealth;
+    public float regenPerSec;
+    public float hidingTime;
     public Slider healthSlider;
+    private bool isRegenerating;
     public float Health { get { return _health; } set { _health = value; } }
     private float _health;
     private void Start()
     {
-        _health = maxHealth;
+        Health = maxHealth;
         healthSlider.gameObject.SetActive(false);
     }
 
     #region Idamagable Interface implementation
     public void TakeDamage(float damage)
     {
-        _health -= damage;
-        healthSlider.value = _health;//Displaying Health 
-        if (_health == maxHealth)
+        StopCoroutine(HealthHidingCoroutine());
+       
+        Health -= damage;
+        healthSlider.value = Health;//Displaying Health 
+        if (Health == maxHealth)
         {
             healthSlider.gameObject.SetActive(false);
         }
         else
         {
+            if(!isRegenerating)
+            StartCoroutine(Regeneration());
             healthSlider.gameObject.SetActive(true);
         }
-        if (_health <= 0)
+        if (Health <= 0)
         {          
             GameManager.instance.GameOver();
         }
+        
+    }
+
+    public IEnumerator HealthHidingCoroutine()
+    {
+        yield return new WaitForSeconds(hidingTime);
+        healthSlider.gameObject.SetActive(false);
     }
     #endregion
+
+    IEnumerator Regeneration()
+    {
+        isRegenerating = true;
+        while(Health<=maxHealth)
+        {
+            yield return new WaitForSeconds(1);
+            Health += regenPerSec;
+            healthSlider.value = Health;
+
+        }
+        isRegenerating = false;
+        StartCoroutine(HealthHidingCoroutine());
+    }
 }

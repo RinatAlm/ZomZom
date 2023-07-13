@@ -1,14 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.AI;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class Airdrop : MonoBehaviour
 {
-    public Weapon weapon;
-    public GameManager gameManager;
+    private Weapon _weapon;
     public NavMeshAgent box;
-
     //AirdropArrow
     public Transform playerTransform;
     public Camera _camera;
@@ -20,7 +19,7 @@ public class Airdrop : MonoBehaviour
     public bool isReady;
 
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
         if(isReady)
         {
@@ -45,30 +44,35 @@ public class Airdrop : MonoBehaviour
             minDistance = Mathf.Clamp(minDistance, 0, arrowOffset);
             Vector3 worldPosition = ray.GetPoint(minDistance);
             worldPointer.position = worldPosition;
-
             ArrowObjectSet.transform.position = _camera.WorldToScreenPoint(worldPosition);
             arrowIconTransform.transform.rotation = Quaternion.FromToRotation(Vector2.right, new Vector2(fromIconToAirdrop.x, fromIconToAirdrop.z));
         }
     }
 
     private void OnTriggerEnter(Collider other)
-    {
-
+    { 
         if (other.gameObject.CompareTag("Player"))
         {
-            weapon = GenerateWeapon();
-            gameManager.inventoryManager.weaponExchangeSlot.GetComponent<WeaponSlot>().weapon = weapon;
-            gameManager.inventoryManager.weaponExchangeSlot.GetComponent<WeaponSlot>().SetWeaponImage();
-            ArrowObjectSet.SetActive(false);
-            gameManager.OpenInventory();
-            gameManager.inventoryManager.weaponExchangeSlot.SetActive(true);           
+            OpenAirdropBox();
         }
+    }
+
+    private void OpenAirdropBox()
+    {
+        _weapon = GenerateWeapon();
+        GameManager.instance.isAirbox= true;      
+        GameManager.instance.OpenInventory();
+        InventoryManager.instance.weaponExchangeButton.GetComponent<WeaponSlot>().weapon = _weapon;
+        InventoryManager.instance.weaponExchangeButton.GetComponent<WeaponSlot>().SetWeaponImage();
+        InventoryManager.instance.exchangeButton.SetActive(true);
+
+        ArrowObjectSet.SetActive(false);
     }
 
     public Weapon GenerateWeapon()
     {
-        GameObject weapon = Instantiate(gameManager.weapons[Random.Range(0, gameManager.weapons.Count)], transform.position, transform.rotation);
-        weapon.transform.SetParent(gameManager.guns.transform);
+        GameObject weapon = Instantiate(GameManager.instance.weapons[Random.Range(0, GameManager.instance.weapons.Count)], transform.position, transform.rotation);
+        weapon.transform.SetParent(GameManager.instance.guns.transform);
         return weapon.GetComponent<Weapon>();
     }
 

@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Bullet
   - Obstacle
+  - Enemy
+  - Turret
   layers:
   - Default
   - TransparentFX
@@ -16,11 +18,11 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Trigger
+  - GameObject
+  - Post
+  - NoPost
+  - Airdrop
   - 
   - 
   - 

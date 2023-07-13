@@ -1,100 +1,75 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
+/// <summary>
+///  Script that spawns Enemies accross the map
+/// </summary>
 
 public class EnemySpawnManager : MonoBehaviour
 {
     public Transform player;
-    public int numberOfEnemiesToSpawn;
-    public float spawnDelay;
-    public List<Enemy> enemyPrefabs = new List<Enemy>();
-    public SpawnMethod EnemySpawnMethod = SpawnMethod.RoundRobin;
-
-    //   public NavMeshTriangulation triangulation;
-    public bool isSpawnCoroutineRun = false;
-    private Dictionary<int, ObjectPool> enemyObjectPools = new Dictionary<int, ObjectPool>();
-    public int spawnedEnemies = 0;
-
-    [SerializeField]
-    float minRad = 2;
-    [SerializeField]
-    float maxRad = 5;
-    [SerializeField]
-    private float sphereCheckRadius;
-    public Vector3 spawnPos;
-    Collider[] hitColliders;
-
+    public List<Enemy> enemyPrefabs = new();
+    [SerializeField]private int _numberOfEnemiesToSpawn;
+    [SerializeField] private float _spawnDelay;
+    [SerializeField] private float _minRad = 2;
+    [SerializeField] private float _maxRad = 5;
+    [SerializeField] private float _sphereCheckRadius;
+    private SpawnMethod _enemySpawnMethod = SpawnMethod.RoundRobin;  
+    private bool _isSpawnCoroutineRun = false;
+    private Dictionary<int, ObjectPool> _enemyObjectPools = new();
+    private int _spawnedEnemies = 0;
+    private Vector3 _spawnPosition;
+    private Collider[] hitColliders;
+    private int _findAwailablePosCounter;
 
     private void Start()
-    {
-        if (Time.timeScale == 1)
-        {
-
-            for (int i = 0; i < numberOfEnemiesToSpawn; i++)
-            {
-                if (EnemySpawnMethod == SpawnMethod.RoundRobin)
-                {
-                    SpawnRoundRobinEnemy(spawnedEnemies);
-                }
-                else if (EnemySpawnMethod == SpawnMethod.Random)
-                {
-                    SpawnRandomEnemy();
-                }
-                spawnedEnemies++;
-            }
-        }
-        else if (Time.timeScale == 0)
-        {
-            for (int i = 0; i < enemyPrefabs.Count; i++)
-            {
-                enemyObjectPools.Add(i, ObjectPool.CreateInstance(enemyPrefabs[i], numberOfEnemiesToSpawn));
-            }         
-        }
+    {      
+        PrespawnEnemies();
     }
 
     private void Update()
     {
-        if (Time.timeScale == 0)
+        if (Time.timeScale == 1)
         {
-
-        }
-        else if (Time.timeScale == 1)
-        {
-            if (!isSpawnCoroutineRun)
+            if (!_isSpawnCoroutineRun)
             {
                 StartCoroutine(SpawnEnemies());
-            }
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                Exit();
-            }
+            }          
         }
-
     }
 
-    IEnumerator SpawnEnemies()
+
+    private void PrespawnEnemies()//Spawn enemies before usage
     {
-        isSpawnCoroutineRun = true;
-        WaitForSeconds wait = new WaitForSeconds(spawnDelay);
-        while (spawnedEnemies < numberOfEnemiesToSpawn)
+        for (int i = 0; i < enemyPrefabs.Count; i++)
         {
-            if (EnemySpawnMethod == SpawnMethod.RoundRobin)
+            _enemyObjectPools.Add(i, ObjectPool.CreateInstance(enemyPrefabs[i], _numberOfEnemiesToSpawn));
+        }
+    }
+    private IEnumerator SpawnEnemies()
+    {
+        _isSpawnCoroutineRun = true;
+        WaitForSeconds wait = new WaitForSeconds(_spawnDelay);
+        while (_spawnedEnemies < _numberOfEnemiesToSpawn)
+        {
+            if (_enemySpawnMethod == SpawnMethod.RoundRobin)
             {
-                SpawnRoundRobinEnemy(spawnedEnemies);
+                SpawnRoundRobinEnemy(_spawnedEnemies);
             }
-            else if (EnemySpawnMethod == SpawnMethod.Random)
+            else if (_enemySpawnMethod == SpawnMethod.Random)
             {
                 SpawnRandomEnemy();
             }
-            spawnedEnemies++;
+            _spawnedEnemies++;
             yield return wait;
         }
-        isSpawnCoroutineRun = false;
+        _isSpawnCoroutineRun = false;
 
     }
 
@@ -106,16 +81,14 @@ public class EnemySpawnManager : MonoBehaviour
 
     private void SpawnRandomEnemy()
     {
-        DoSpawnEnemy(Random.Range(0, enemyPrefabs.Count));
+        DoSpawnEnemy(UnityEngine.Random.Range(0, enemyPrefabs.Count));
     }
 
     private void DoSpawnEnemy(int spawnIndex)
     {
-        PoolableObject poolableObject = enemyObjectPools[spawnIndex].GetObject();
+        PoolableObject poolableObject = _enemyObjectPools[spawnIndex].GetObject();
         if (poolableObject != null)
         {
-            Enemy enemy = poolableObject.GetComponent<Enemy>();
-
             //int VertexIndex = Random.Range(0, triangulation.vertices.Length);
             //NavMeshHit Hit;
             //if (NavMesh.SamplePosition(triangulation.vertices[VertexIndex],out Hit,2f,-1))
@@ -125,11 +98,15 @@ public class EnemySpawnManager : MonoBehaviour
             //    enemy.navComponent.enabled = true;
             //    enemy.enemyMovement.StartChasing();
             //}
+            Enemy enemy = poolableObject.GetComponent<Enemy>();
             repeat:
+            if(_findAwailablePosCounter>50)
+            {
+                Debug.LogAssertion("Position not found");
+            }
             if (FindAvailablePosition())
             {
-                enemy.transform.position = spawnPos;
-                enemy.enemyMovement.target = player;
+                enemy.transform.position = _spawnPosition;
                 enemy.navComponent.enabled = true;
                 enemy.enemyMovement.StartChasing();
             }
@@ -137,7 +114,6 @@ public class EnemySpawnManager : MonoBehaviour
             {
                 goto repeat;
             }
-     
         }
         else
         {
@@ -146,25 +122,29 @@ public class EnemySpawnManager : MonoBehaviour
     }
 
     Vector3 CalculateSpawnOffset()
-    {
-        Vector3 offset = Random.onUnitSphere * Random.Range(minRad, maxRad);
+    {      
+        Vector3 offset = UnityEngine.Random.onUnitSphere.normalized * UnityEngine.Random.Range(_minRad, _maxRad);
         return offset;
     }
 
    
     private bool FindAvailablePosition()
-    {
-        spawnPos = player.position + CalculateSpawnOffset();
-        spawnPos = new Vector3(spawnPos.x, 0, spawnPos.z);
-        hitColliders = Physics.OverlapSphere(spawnPos, sphereCheckRadius);
-        if(hitColliders.Length == 1)
+    {     
+        _spawnPosition = player.position + CalculateSpawnOffset();
+        _spawnPosition = new Vector3(_spawnPosition.x, 0, _spawnPosition.z);
+        hitColliders = Physics.OverlapSphere(_spawnPosition, _sphereCheckRadius);
+        NavMeshHit hit;
+        _findAwailablePosCounter++;
+        if (hitColliders.Length == 1 && NavMesh.SamplePosition(_spawnPosition, out hit, _sphereCheckRadius, NavMesh.AllAreas))
         {
+            _findAwailablePosCounter = 0;
             return true;
         }
         else
         {
             return false;
         }
+        
     }
     public enum SpawnMethod
     {
@@ -172,14 +152,9 @@ public class EnemySpawnManager : MonoBehaviour
         Random
     }
 
-    public void Exit()
+    public void DecrementEnemiesNumber()
     {
-#if UNITY_EDITOR
-        EditorApplication.ExitPlaymode();
-#else
-        Application.Quit();
-#endif
+        _spawnedEnemies--;
     }
-
 
 }

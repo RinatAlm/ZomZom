@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 419851ba6843f0f40a47c959a8fa122a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponSprite: {fileID: 21300000, guid: c4945a2498a76da499f898b52d3f928b, type: 3}
+  weaponSprite: {fileID: 21300000, guid: d255f272bcc74c0428dfc5945db07019, type: 3}
   damage: 35
   bullet: {fileID: 8502909531764189710, guid: f433166b5e886c04783cb6316395eff4, type: 3}
   shootTimerMax: 0.5
@@ -64,3 +64,5 @@ MonoBehaviour:
     pitch: 1
     source: {fileID: 0}
   weaponDescription: 
+  isRickochetBullet: 0
+  boomPrefab: {fileID: 0}

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
 {
+    public static InventoryManager instance;   
     [Header("GunnerArms")]
     public GunnerArm leftBottom;
     public GunnerArm rightBottom;
@@ -18,6 +19,8 @@ public class InventoryManager : MonoBehaviour
     public GameObject leftTopSlot;
     public GameObject rightTopSlot;
     public GameObject exchangeSlot;
+    public Color activeSlotColor;
+    public Color inactiveSlotColor;
     [Space(10)]
 
     [Header("WeaponDescription")]
@@ -33,13 +36,25 @@ public class InventoryManager : MonoBehaviour
 
     public GameObject descriptionPanels;
     public GameObject descriptionPanel;
-    public GameObject weaponExchangeSlot;
-    public GameObject exchangeButton;
+    public GameObject weaponExchangeButton;
+    public GameObject exchangeButton;   
     public List<WeaponSlot> weaponsExchange = new List<WeaponSlot>();
     public Sprite emptySprite;
     public bool isSwapping = false;
     public Weapon emptyWeapon;
+    private Button _exchangeButtonButton;
 
+
+    private void Awake()
+    {
+        instance = this;   
+    }
+    void Start()
+    {
+        _exchangeButtonButton = exchangeButton.GetComponent<Button>();
+        exchangeButton.SetActive(false);
+        SetWeapon();
+    }
     public void SetWeapon()
     {
         leftBottom.weapon = leftBottomSlot.GetComponent<WeaponSlot>().weapon;
@@ -47,24 +62,16 @@ public class InventoryManager : MonoBehaviour
         leftTop.weapon = leftTopSlot.GetComponent<WeaponSlot>().weapon;
         rightTop.weapon = rightTopSlot.GetComponent<WeaponSlot>().weapon;
     }
-
-
-    void Start()
-    {
-        exchangeButton.SetActive(false);
-        SetWeapon();
-    }
     public void ShowWeaponInfo()
     {
         if(weaponsExchange.Count == 0)
         {
             DoNotShowDescription();
+            _exchangeButtonButton.enabled = false;
         }
         else if(weaponsExchange.Count > 2)
         {
-
             weaponsExchange[0].Select();
-
         }
         else
         {
@@ -74,13 +81,16 @@ public class InventoryManager : MonoBehaviour
             if (weaponsExchange[index].weapon.weaponSprite == emptySprite && weaponsExchange.Count == 1)
             {
                 DoNotShowDescription();
+                _exchangeButtonButton.enabled = false;
             }
             else if (weaponsExchange[index].weapon.weaponSprite != emptySprite && weaponsExchange.Count == 1)
             {
                 ShowDescription(index);
+                _exchangeButtonButton.enabled = false;
             }
             else if (weaponsExchange[index].weapon.weaponSprite == emptySprite && weaponsExchange.Count == 2)
             {
+                _exchangeButtonButton.enabled = true;
                 index++;//Incrementing index
                 if (weaponsExchange[index].weapon.weaponSprite == emptySprite)
                 {
@@ -94,7 +104,8 @@ public class InventoryManager : MonoBehaviour
                 }
             }
             else if (weaponsExchange[index].weapon.weaponSprite != emptySprite && weaponsExchange.Count == 2)
-            {              
+            {
+                _exchangeButtonButton.enabled = true;
                 index++;
                 if (weaponsExchange[index].weapon.weaponSprite == emptySprite)
                 {                    
@@ -144,7 +155,7 @@ public class InventoryManager : MonoBehaviour
     }
     public void DoNotShowDescription()
     {
-        descriptionPanels.SetActive(false);
+        descriptionPanels.SetActive(false);        
     }
 
     public void SwapWeapons()

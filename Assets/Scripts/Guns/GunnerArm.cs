@@ -15,42 +15,36 @@ public class GunnerArm : MonoBehaviour
     private float shootRadius = 1;
     private float SphereCastRadius = 0.1f;
     private RaycastHit hit;
-    public BulletSpawnManager bulletSpawnManager;
-    private AudioManager audioManager;
+    
     
     private void Start()
     {
         gunManager = FindObjectOfType<GunManager>();
-        audioManager = FindObjectOfType < AudioManager>();
-
     }
 
 
-    private void LateUpdate()
-    {   
-        
-            if (targetEnemy == null)
+    private void FixedUpdate()
+    {
+        if (targetEnemy == null)
+        {
+            shootTimer = weapon.delay;
+        }
+        if (weapon != null && targetEnemy != null && shots != weapon.numberOfTriggerPressing)
+        {
+            shootTimer -= Time.deltaTime;
+            if (shootTimer <= 0)
             {
                 shootTimer = weapon.delay;
-            }
-            if (weapon != null && targetEnemy != null && shots != weapon.numberOfTriggerPressing)
-            {
-                shootTimer -= Time.deltaTime;
-                if (shootTimer <= 0)
+                shots++;
+                Shoot();
+                if (shots == weapon.numberOfTriggerPressing)
                 {
-                    shootTimer = weapon.delay;
-                    shots++;
-                    Shoot();
-                    if (shots == weapon.numberOfTriggerPressing)
-                    {
-                        shots = 0;
-                        shootTimer = weapon.shootTimerMax;
-                    }
+                    shots = 0;
+                    shootTimer = weapon.shootTimerMax;
                 }
-
             }
-        
-       
+
+        }
     }
 
     public void Shoot()
@@ -61,22 +55,20 @@ public class GunnerArm : MonoBehaviour
             direction = targetEnemy.transform.position - transform.position;
             
            if (Physics.SphereCast(transform.position, SphereCastRadius, direction.normalized, out hit, shootRadius, mask))//If no obstacles => shoot
-            {               
-                if(!hit.collider.CompareTag("Obstacle"))
-                {          
-                    for(int i=0;i<weapon.numOfBulletsPerPressing;i++)
+           {
+                if (!hit.collider.CompareTag("Obstacle"))
+                {
+                    for (int i = 0; i < weapon.numOfBulletsPerPressing; i++)
                     {
-                        bulletSpawnManager.DoSpawnBullet(this, transform.position, RandomizeVector(direction.normalized));
+                        BulletSpawnManager.instance.DoSpawnBullet(this, transform.position, RandomizeVector(direction.normalized));
                     }
                     weapon.Play();
-                   
+
                 }
                 else
                 {
                     ResetTarget();
                 }
-
-                             
             }          
         }
 
@@ -98,11 +90,9 @@ public class GunnerArm : MonoBehaviour
     }
     public void SetTarget(Enemy targetEnemy)
     {
-     
-            this.targetEnemy = targetEnemy;
-             if (targetEnemy != null)
+        this.targetEnemy = targetEnemy;
+        if (targetEnemy != null)
             this.targetEnemy.gunnerArms.Add(this);
-        
     }
 
 

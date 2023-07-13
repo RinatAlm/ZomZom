@@ -150,10 +150,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AutoDestroyTime: 3
   bulletBody: {fileID: 3659572247788455627}
-  startPosition: {x: -0.59042645, y: 0.06, z: -1.4134043}
-  targetPosition: {x: 0, y: 0, z: 0}
   bulletOfArm: {fileID: 0}
   numOfAimsToDestr: 0
+  isRicochetBullet: 0
+  isExplosive: 0
 --- !u!96 &1072160165
 TrailRenderer:
   serializedVersion: 2

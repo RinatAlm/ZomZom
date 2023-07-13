@@ -10,15 +10,12 @@ public class WeaponSlot : MonoBehaviour
     public Image WeaponImageUI;
 
     [Header("Slot Interaction")]
-    public Sprite NotActiveSlotSprite;
-    public Sprite ActiveSlotSprite;
     public bool isSelected = false;
-    public InventoryManager inventoryManager;
     Button button;
 
     private void Start()
     {       
-        button = gameObject.GetComponent<Button>();
+        button = gameObject.GetComponentInChildren<Button>();
         button.onClick.AddListener(() => { Select(); });
         SetWeaponImage();
 
@@ -28,17 +25,17 @@ public class WeaponSlot : MonoBehaviour
         isSelected = !isSelected;
         if(isSelected)
         {
-            gameObject.GetComponent<Image>().sprite = ActiveSlotSprite;
-            inventoryManager.weaponsExchange.Add(this);
-            if(!inventoryManager.isSwapping)
-            inventoryManager.ShowWeaponInfo();
+            gameObject.GetComponent<Image>().color = InventoryManager.instance.activeSlotColor;
+            InventoryManager.instance.weaponsExchange.Add(this);
+            if(!InventoryManager.instance.isSwapping)
+                InventoryManager.instance.ShowWeaponInfo();
         }
         else
         {
-            gameObject.GetComponent<Image>().sprite = NotActiveSlotSprite;
-            inventoryManager.weaponsExchange.Remove(this);
-            if (!inventoryManager.isSwapping)
-                inventoryManager.ShowWeaponInfo();
+            gameObject.GetComponent<Image>().color = InventoryManager.instance.inactiveSlotColor;
+            InventoryManager.instance.weaponsExchange.Remove(this);
+            if (!InventoryManager.instance.isSwapping)
+                InventoryManager.instance.ShowWeaponInfo();
         }
        
     }
@@ -47,9 +44,9 @@ public class WeaponSlot : MonoBehaviour
     [ContextMenu("SetImage")]
     public void SetWeaponImage()
     {
-        if (weapon.weaponSprite != inventoryManager.emptySprite)
+        if (weapon.weaponSprite != InventoryManager.instance.emptySprite)
             WeaponImageUI.sprite = weapon.weaponSprite;
         else
-            WeaponImageUI.sprite = inventoryManager.emptySprite;
+            WeaponImageUI.sprite = InventoryManager.instance.emptySprite;
     }     
     }
